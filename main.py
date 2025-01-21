@@ -6,22 +6,13 @@ import uvicorn
 from infrastructure.fastapi.set_middleware import set_middleware
 from infrastructure.logging.logging_config import logger
 from infrastructure.fastapi.lifespan import lifespan
+from conf.app_conf import AppConf
 
 
-
-
-    
-    
-description = """
-Example API to demonstrate SSO login in fastAPI
-"""
-    
 app = FastAPI(
-title='SSO login example API',
-description=description,
-version="1.0.0",
-docs_url="/v1/documentation",
-redoc_url="/v1/redocs",
+title=AppConf.TITLE,
+description=AppConf.DESCRIPTION,
+version=AppConf.VERSION,
 lifespan=lifespan
 )
 
