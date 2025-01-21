@@ -1,5 +1,5 @@
 from infrastructure.logging.logging_config import logger
-from infrastructure.database.db_modeles import Base
+from infrastructure.database.table.db_modeles import Base
 from infrastructure.database.database import engine
 
 def table_create():
