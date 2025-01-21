@@ -20,15 +20,13 @@ lifespan=lifespan
 set_middleware(app)
 
 
-if __name__ == '__main__':
-    uvicorn.run("main:app", host="0.0.0.0", port=9999, reload=True)
-
-
-
-
-
-
 @app.get("/")
 async def root():
     logger.info("Requête reçue sur la route '/'")
     return {"message": "Hello World"}
+
+
+if __name__ == '__main__':
+    uvicorn.run("main:app", host="0.0.0.0", port=9999, reload=True)
+
+
