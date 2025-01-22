@@ -1,5 +1,7 @@
+from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Form, status
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from authentication import SESSION_COOKIE_NAME, authenticate_user, create_access_token
 from schemas import User, UserSignUp
@@ -27,18 +29,30 @@ def create_user(user_signup: UserSignUp, db: Session = Depends(get_db)):
         
         
 @router.post("/login", summary="Login as a user", tags=["Auth"])
-def login(response: RedirectResponse, username: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
+def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)):
     """
     Logs in a user.
     """
-    user = authenticate_user(db=db, username=username, password=password, provider='local')
+    user = authenticate_user(db=db, username=form_data.username, password=form_data.password, provider='local')
     if not user:
         raise HTTPException(
             status_code=401, detail="Invalid username or password.")
     try:
         access_token = create_access_token(username=user.username, provider='local')
-        response = RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
-        response.set_cookie(SESSION_COOKIE_NAME, access_token)
+        # response = RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
+        response = JSONResponse(content={"message": "Login successful"})
+        
+        # Set the cookie
+        response.set_cookie(
+            key=SESSION_COOKIE_NAME,
+            value=access_token,
+            httponly=True,  # Prevent JavaScript access to the cookie
+            max_age=3600,  # Cookie expiration time in seconds
+            expires=3600,  # Same as max_age
+            secure=True,   # Send cookie only over HTTPS
+            samesite="Strict"  # Prevent CSRF in some cases
+        )
+        
         return response
     except Exception as e:
         raise HTTPException(
