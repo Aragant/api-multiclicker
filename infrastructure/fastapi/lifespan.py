@@ -7,6 +7,6 @@ from infrastructure.logging.logging_config import logger
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    table_create()
+    await table_create()
     yield
     logger.info("Arrêt de l'application.")
