@@ -11,7 +11,6 @@ load_dotenv()
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 engine = create_async_engine(DATABASE_URL)
-async_session = AsyncSession(bind=engine)
 
 Base = declarative_base()
 
