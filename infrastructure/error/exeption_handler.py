@@ -2,7 +2,7 @@
 
 from fastapi import Request
 from fastapi.responses import JSONResponse
-from infrastructure.error import NotFoundError
+from infrastructure.error.error import NotFoundError
 
 
 def setup_exepction_handlers(app):

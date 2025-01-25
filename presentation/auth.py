@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from infrastructure.error import NotFoundError
+from infrastructure.error.error import NotFoundError
 
 
 
