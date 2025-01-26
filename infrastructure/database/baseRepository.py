@@ -24,7 +24,6 @@ class BaseRepository:
         async with transaction() as session:
             result: Result = await session.execute(query)
             _result = result.scalars().one_or_none()
-                        
             
             
             if _result is None:
