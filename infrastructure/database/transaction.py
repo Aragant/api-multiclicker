@@ -3,12 +3,14 @@
 
 from contextlib import asynccontextmanager
 from infrastructure.database.database import engine
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
+
+async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 @asynccontextmanager
 async def transaction():
-    session = AsyncSession(bind=engine)
+    session: AsyncSession = async_session()
     try:
         yield session
         await session.commit()

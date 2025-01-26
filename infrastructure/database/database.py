@@ -11,7 +11,7 @@ from infrastructure.logging.logging_config import logger
 
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
-engine = create_async_engine(DATABASE_URL)
+engine = create_async_engine(DATABASE_URL, echo=True)
 
 Base = declarative_base()
 

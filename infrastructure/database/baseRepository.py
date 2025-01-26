@@ -1,7 +1,13 @@
-from typing import Generic, Type
+from typing import Any, Generic, Type
+
+from pydantic import ValidationError
+from infrastructure.database.transaction import transaction
 from infrastructure.database.database import ConcreteTable
 from sqlalchemy import select
 from sqlalchemy.engine import Result
+
+from infrastructure.error.error import NotFoundError
+from user.userSchema import UserFlat
 
 
 class BaseRepository:
@@ -14,10 +20,15 @@ class BaseRepository:
         query = select(self.schema_class).where(
             getattr(self.schema_class, key) == value
         )
-        result: Result = await self.execute(query)
-        _result = result.scalars().one_or_none()
         
-        if _result is None:
-            raise NotFoundError 
+        async with transaction() as session:
+            result: Result = await session.execute(query)
+            _result = result.scalars().one_or_none()
+                        
+            
+            
+            if _result is None:
+                raise NotFoundError(ressource=value) 
 
-        return _result
+            return _result.__dict__
+    

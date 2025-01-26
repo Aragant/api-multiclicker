@@ -9,8 +9,14 @@ from infrastructure.fastapi.set_middleware import set_middleware
 from infrastructure.logging.logging_config import logger
 from infrastructure.fastapi.lifespan import lifespan
 from conf.app_conf import AppConf
-from presentation import auth
 
+from presentation.auth import router as auth_router
+from user.userPresentation import router as user_router
+
+rest_router = [
+    auth_router,
+    user_router
+]
 
 load_dotenv()
 
@@ -25,7 +31,10 @@ lifespan=lifespan
 set_middleware(app)
 
 setup_exepction_handlers(app)
-app.include_router(auth.router)
+
+
+for router in rest_router:
+    app.include_router(router)
 
 
 
