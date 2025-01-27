@@ -1,6 +1,6 @@
 
 
-from infrastructure.database.models.user_model import User
+from user.user_model import User
 from infrastructure.security.authentication import get_password_hash
 from user.userRepository import UserRepository
 from user.userSchema import UserSignUp

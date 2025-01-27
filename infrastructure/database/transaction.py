@@ -21,7 +21,8 @@ async def transaction():
         await session.rollback()
         frame = inspect.stack()[3]
         caller_function = frame.function
-        logger.error("Erreur durant la transaction dans la fonction '%s' : %s", caller_function, e)
+        caller_class = frame.frame.f_locals["self"].__class__.__name__
+        logger.error("Erreur durant la transaction dans la fonction '%s' de la classe '%s' : %s", caller_function, caller_class, e)
         raise DatabaseError
     finally:
         await session.close()

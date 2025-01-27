@@ -1,5 +1,5 @@
 from infrastructure.logging.logging_config import logger
-from infrastructure.database.models.user_model import Base
+from user.user_model import Base
 from infrastructure.database.database import engine
 
 async def table_create():
