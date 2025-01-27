@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.engine import Result
 
 from infrastructure.error.error import NotFoundError
-from user.user_schema import UserFlat
+from domain.user.user_schema import UserFlat
 
 
 class BaseRepository:

@@ -4,21 +4,20 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
-from pydantic import BaseModel
 
-from user.user_repository import UserRepository
+from domain.user.user_repository import UserRepository
 from jwt.exceptions import InvalidTokenError
 import jwt
 
-from user.user_schema import UserFlat, UserForLogin, UserPrivate
+from domain.user.user_schema import UserFlat, UserForLogin, UserPrivate
+from infrastructure.security.token_data import TokenData
 
 
 
 ALGORITHM = "HS256"
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
-class TokenData(BaseModel):
-    username: str | None = None
+
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
