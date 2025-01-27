@@ -17,5 +17,5 @@ engine = create_async_engine(DATABASE_URL) #echo=True pour afficher les requetes
 
 Base = declarative_base()
 
-ConcreteTable = TypeVar("ConcreteTable", bound=Base)
+ConcreteTable = TypeVar(Base)
 

@@ -10,7 +10,7 @@ from infrastructure.logging.logging_config import logger
 from infrastructure.fastapi.lifespan import lifespan
 from conf.app_conf import AppConf
 
-from presentation.auth import router as auth_router
+from auth.authPresentation import router as auth_router
 from user.userPresentation import router as user_router
 
 rest_router = [

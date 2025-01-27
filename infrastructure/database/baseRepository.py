@@ -30,4 +30,12 @@ class BaseRepository:
                 raise NotFoundError(ressource=value) 
 
             return _result.__dict__
+        
+    async def _save(self, instance: ConcreteTable) -> ConcreteTable:
+        """Save or update an instance"""
+        async with transaction() as session:
+            session.add(instance)
+            await session.commit()
+            await session.refresh(instance)
+            return instance.__dict__
     

@@ -12,3 +12,4 @@ fastapi-sso==0.17.0
 python-dotenv==1.0.1
 itsdangerous==2.2.0
 asyncpg
+pyjwt
