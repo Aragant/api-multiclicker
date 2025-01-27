@@ -3,13 +3,13 @@ import os
 from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
 
 from domain.user.user_repository import UserRepository
 from jwt.exceptions import InvalidTokenError
 import jwt
 
-from domain.user.user_schema import UserFlat, UserForLogin, UserPrivate
+from domain.user.user_schema import UserForLogin, UserPrivate
+from infrastructure.security.password_hash_service import verify_password
 from infrastructure.security.token_data import TokenData
 
 
@@ -20,15 +20,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
-
-
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
-
-def get_password_hash(password):
-    return pwd_context.hash(password)
 
 
 async def authenticate_user(username: str, password: str):

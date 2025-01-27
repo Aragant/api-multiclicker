@@ -1,13 +1,12 @@
-from typing import Any, Generic, Type
+from typing import Any, Type
 
-from pydantic import ValidationError
 from infrastructure.database.transaction import transaction
 from infrastructure.database.database import ConcreteTable
 from sqlalchemy import select
 from sqlalchemy.engine import Result
 
 from infrastructure.error.error import NotFoundError
-from domain.user.user_schema import UserFlat
+
 
 
 class BaseRepository:

@@ -6,7 +6,6 @@ import uvicorn
 
 from infrastructure.error.exeption_handler import setup_exepction_handlers
 from infrastructure.fastapi.set_middleware import set_middleware
-from infrastructure.logging.logging_config import logger
 from infrastructure.fastapi.lifespan import lifespan
 from conf.app_conf import AppConf
 
@@ -21,10 +20,10 @@ rest_router = [
 load_dotenv()
 
 app = FastAPI(
-title=AppConf.TITLE,
-description=AppConf.DESCRIPTION,
-version=AppConf.VERSION,
-lifespan=lifespan
+    title=AppConf.TITLE,
+    description=AppConf.DESCRIPTION,
+    version=AppConf.VERSION,
+    lifespan=lifespan
 )
 
 
