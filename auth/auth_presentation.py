@@ -6,8 +6,8 @@ from pydantic import BaseModel
 
 from infrastructure.error.error import NotFoundError
 from infrastructure.security.authentication import authenticate_user, create_access_token, get_current_active_user
-from user.userRepository import UserRepository
-from user.userSchema import UserFlat, UserPrivate
+from user.user_repository import UserRepository
+from user.user_schema import UserFlat, UserPrivate
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])

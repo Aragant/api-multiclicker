@@ -1,9 +1,9 @@
 
 from fastapi import APIRouter
 
-from user.userRepository import UserRepository
+from user.user_repository import UserRepository
 from infrastructure.logging.logging_config import logger
-from user.userSchema import UserFlat, UserSignUp
+from user.user_schema import UserFlat, UserSignUp
 from user.user_domain import UserDomain
 
 

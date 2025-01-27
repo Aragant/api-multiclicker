@@ -6,11 +6,11 @@ from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from pydantic import BaseModel
 
-from user.userRepository import UserRepository
+from user.user_repository import UserRepository
 from jwt.exceptions import InvalidTokenError
 import jwt
 
-from user.userSchema import UserFlat, UserForLogin, UserPrivate
+from user.user_schema import UserFlat, UserForLogin, UserPrivate
 
 
 

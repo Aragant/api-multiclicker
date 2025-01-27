@@ -1,7 +1,7 @@
 from infrastructure.database.transaction import transaction
-from infrastructure.database.baseRepository import BaseRepository
+from infrastructure.database.base_repository import BaseRepository
 from user.user_model import User
-from user.userSchema import UserFlat, UserForLogin, UserPrivate
+from user.user_schema import UserFlat, UserForLogin, UserPrivate
 
 
 class UserRepository(BaseRepository):
