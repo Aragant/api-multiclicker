@@ -8,6 +8,7 @@ class UserFlat(BaseModel):
     
 class UserPrivate(BaseModel):
     username: str
+    disabled: bool
     
 class UserForLogin(BaseModel):
     username: str
