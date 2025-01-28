@@ -24,5 +24,9 @@ class UserDomain:
             password=password,
             provider=provider
         )
+        new_user = await UserRepository().save(user)
         
-        return await UserRepository().save(user)
+        logger.info("Utilisateur créé : %s", new_user)
+        return new_user
+    
+
