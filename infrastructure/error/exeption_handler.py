@@ -12,4 +12,4 @@ def setup_exepction_handlers(app):
     
     @app.exception_handler(DatabaseError)
     async def database_error_handler(request: Request, exc: DatabaseError):
-        return JSONResponse(content={"DatabaseError": "Database error"}, status_code=500)
+        return JSONResponse(content={"DatabaseError": "Database error", "details": f"{exc}"}, status_code=500)
