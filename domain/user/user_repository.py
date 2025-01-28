@@ -7,11 +7,12 @@ class UserRepository(BaseRepository):
     schema_class = User
     
     async def get_by_username(self, username: str) -> UserFlat:
-        user = await self._get("username", username)
+        user = await self._get(username=username, disabled=False)
         return UserFlat.model_validate(user)
     
     async def get_by_username_for_login(self, username: str) -> UserForLogin:
-        user = await self._get("username", username)
+        # self.get take **kwargs as arguments
+        user = await self._get(username=username, disabled=False)
         return UserForLogin.model_validate(user)
     
     async def save(self, user: User) -> UserPrivate:
