@@ -4,6 +4,7 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
+from domain.user.user_domain import UserDomain
 from domain.user.user_repository import UserRepository
 from jwt.exceptions import InvalidTokenError
 import jwt
@@ -11,6 +12,7 @@ import jwt
 from domain.user.user_schema import UserForLogin, UserPrivate
 from infrastructure.security.password_hash_service import verify_password
 from infrastructure.security.token_data import TokenData
+from infrastructure.logging.logging_config import logger
 
 
 
@@ -29,6 +31,8 @@ async def authenticate_user(username: str, password: str):
         return False
     if not verify_password(password, user.password):
         return False
+    
+    logger.info("Utilisateur connecté : %s", user.username)
     return user
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
@@ -57,7 +61,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         token_data = TokenData(username=username)
     except InvalidTokenError:
         raise credentials_exception
-    user = await UserRepository().get_by_username(username=token_data.username)
+    user = await UserDomain().get_by_username(username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
