@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 
-from infrastructure.security.authentication import authenticate_user, create_access_token, get_current_active_user
+from domain.auth.authentication import authenticate_user, create_access_token, get_current_active_user
 from domain.user.user_schema import UserPrivate
 
 
@@ -34,8 +34,4 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@router.get("/users/me/", response_model=UserPrivate)
-async def read_users_me(
-    current_user: Annotated[UserPrivate, Depends(get_current_active_user)],
-):
-    return current_user
+
