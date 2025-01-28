@@ -16,7 +16,7 @@ class Token(BaseModel):
     token_type: str
 
 
-@router.post("/token")
+@router.post("/login")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
