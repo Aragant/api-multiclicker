@@ -20,7 +20,7 @@ async def transaction():
     except Exception as e:
         await session.rollback()
         database_error_logger(e)
-        raise DatabaseError
+        raise e
     finally:
         await session.close()
         
