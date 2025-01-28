@@ -29,4 +29,4 @@ def database_error_logger(e):
     frame = inspect.stack()[3]
     caller_function = frame.function
     caller_class = frame.frame.f_locals["self"].__class__.__name__
-    logger.error("Erreur durant la transaction dans la fonction '%s' de la classe '%s' : %s", caller_function, caller_class, e)
+    logger.error("Error during transaction in '%s' method of '%s' class : %s", caller_function, caller_class, e)
