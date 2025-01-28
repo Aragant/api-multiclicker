@@ -5,6 +5,7 @@ from sqlalchemy.orm import declarative_base
 
 
 DATABASE_URL: str = os.environ.get('DATABASE_URL')
+
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL is not defined in the environment")
 
