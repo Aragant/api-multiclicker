@@ -13,17 +13,17 @@ from domain.user.user_domain import UserDomain
 router = APIRouter(prefix="/user", tags=["user"])
 
 @router.get("")
-async def get_user(username: str):
+async def get_user_route(username: str):
     user: UserFlat = await UserDomain().get_by_username(username)
     return user
 
 @router.post("")
-async def create_user(user: UserSignUp):
+async def create_user_route(user: UserSignUp):
     user = await UserDomain().create(user)
     return user
 
 @router.get("/me/", response_model=UserPrivate)
-async def read_users_me(
+async def get_current_user_route(
     current_user: Annotated[UserPrivate, Depends(get_current_active_user)],
 ):
     return current_user
