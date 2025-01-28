@@ -4,6 +4,7 @@ from domain.user.user_model import User
 from infrastructure.security.password_hash_service import get_password_hash
 from domain.user.user_repository import UserRepository
 from domain.user.user_schema import UserSignUp
+from infrastructure.logging.logging_config import logger
 
 
 class UserDomain:
@@ -30,3 +31,8 @@ class UserDomain:
         return new_user
     
 
+    
+    async def get_by_username(self, username: str):
+        user = await UserRepository().get_by_username(username)
+        logger.info("Utilisateur trouvé : %s", user)
+        return user
