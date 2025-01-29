@@ -22,7 +22,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
 async def authenticate_user(username: str, password: str):
