@@ -6,7 +6,7 @@ from infrastructure.database.database import Base
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String)
+    username = Column(String, unique=True)
     password = Column(String, nullable=True)
     provider = Column(String, default="local", nullable=True)
     disabled = Column(Boolean, default=False)
