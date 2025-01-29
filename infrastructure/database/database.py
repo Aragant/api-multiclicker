@@ -12,6 +12,3 @@ if not DATABASE_URL:
 engine = create_async_engine(DATABASE_URL) #echo=True pour afficher les requetes sql dans les logs
 
 Base = declarative_base()
-
-ConcreteTable = TypeVar(Base)
-

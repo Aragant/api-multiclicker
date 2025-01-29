@@ -1,7 +1,7 @@
 from typing import Any, Type
+from unittest.mock import Base
 
 from infrastructure.database.transaction import transaction
-from infrastructure.database.database import ConcreteTable
 from sqlalchemy import select, and_
 from sqlalchemy.engine import Result
 
@@ -10,10 +10,10 @@ from infrastructure.error.error import NotFoundError
 
 
 class BaseRepository:
-    schema: Type[ConcreteTable]
+    schema: Type[Base]
     
     
-    async def _get(self, **kwargs) -> ConcreteTable:
+    async def _get(self, **kwargs) -> Base:
         """Return only one result by filters"""
         conditions = [getattr(self.schema_class, key) == value for key, value in kwargs.items()]
         query = select(self.schema_class).where(and_(*conditions))
@@ -29,7 +29,7 @@ class BaseRepository:
             return _result.__dict__
 
 
-    async def _save(self, instance: ConcreteTable) -> ConcreteTable:
+    async def _save(self, instance: Base) -> Base:
         """Save or update an instance"""
         async with transaction() as session:
             session.add(instance)
