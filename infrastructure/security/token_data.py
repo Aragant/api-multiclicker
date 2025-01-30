@@ -2,4 +2,4 @@ from pydantic import BaseModel
 
 
 class TokenData(BaseModel):
-    username: str | None = None
+    id: str | None = None

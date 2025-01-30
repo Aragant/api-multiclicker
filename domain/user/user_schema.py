@@ -3,14 +3,17 @@ from pydantic import BaseModel
 
 
 class UserFlat(BaseModel):
+    id: str
     username: str
     disabled: bool
     
 class UserPrivate(BaseModel):
+    id: str
     username: str
     disabled: bool
     
 class UserForLogin(BaseModel):
+    id: str
     username: str
     password: str
     

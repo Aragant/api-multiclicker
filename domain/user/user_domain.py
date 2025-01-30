@@ -27,12 +27,17 @@ class UserDomain:
         )
         new_user = await UserRepository().save(user)
         
-        logger.info("Utilisateur créé : %s", new_user)
+        logger.info("User created : %s", new_user)
         return new_user
     
 
     
     async def get_by_username(self, username: str):
         user = await UserRepository().get_by_username(username)
-        logger.info("Utilisateur trouvé : %s", user)
+        logger.info("User found : %s", user)
+        return user
+    
+    async def get_by_id(self, id: str):
+        user = await UserRepository().get_by_id(id)
+        logger.info("User found : %s", user)
         return user
