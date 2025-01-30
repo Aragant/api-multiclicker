@@ -2,7 +2,7 @@ from typing import Any, Type
 from unittest.mock import Base
 
 from infrastructure.database.transaction import transaction
-from sqlalchemy import select, and_
+from sqlalchemy import delete, select, and_
 from sqlalchemy.engine import Result
 
 from infrastructure.error.error import NotFoundError
@@ -37,8 +37,12 @@ class BaseRepository:
             await session.refresh(instance)
             return instance.__dict__
         
-    async def _delete(self, instance: Base) -> None:
+    async def _delete(self, **kwargs) -> None:
+        conditions = [getattr(self.schema_class, key) == value for key, value in kwargs.items()]
+        query = delete(self.schema_class).where(and_(*conditions))
+        
         async with transaction() as session:
-            session.delete(instance)
+            await session.execute(query)
             await session.commit()
+            
     

@@ -19,9 +19,9 @@ class RefreshTokenRepository(BaseRepository):
             return None
         
         if refresh_token.expires_at < datetime.now(timezone.utc):
-            return None
+            return self.delete_by_refresh_token(refresh_token.refresh_token)
         
         return refresh_token
     
     async def delete_by_refresh_token(self, refresh_token: str) -> None:
-        return await self._delete(refresh_token)
+        return await self._delete(refresh_token=refresh_token)
