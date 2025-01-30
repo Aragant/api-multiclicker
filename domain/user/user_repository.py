@@ -15,6 +15,10 @@ class UserRepository(BaseRepository):
         user = await self._get(username=username, disabled=False)
         return UserForLogin.model_validate(user)
     
+    async def get_by_id(self, id: str) -> UserPrivate:
+        user = await self._get(id=id, disabled=False)
+        return UserPrivate.model_validate(user)
+    
     async def save(self, user: User) -> UserPrivate:
         user = await self._save(user)
         return UserPrivate.model_validate(user)

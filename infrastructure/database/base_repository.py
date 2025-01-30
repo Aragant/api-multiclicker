@@ -36,4 +36,9 @@ class BaseRepository:
             await session.commit()
             await session.refresh(instance)
             return instance.__dict__
+        
+    async def _delete(self, instance: Base) -> None:
+        async with transaction() as session:
+            session.delete(instance)
+            await session.commit()
     
