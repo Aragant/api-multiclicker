@@ -23,3 +23,7 @@ class UserRepository(BaseRepository):
         user = await self._save(user)
         return UserPrivate.model_validate(user)
     
+    async def update(self, user: User) -> UserPrivate:
+        user = await self._update(user)
+        return UserPrivate.model_validate(user)
+    

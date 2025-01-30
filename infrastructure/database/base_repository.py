@@ -2,7 +2,7 @@ from typing import Any, Type
 from unittest.mock import Base
 
 from infrastructure.database.transaction import transaction
-from sqlalchemy import delete, select, and_
+from sqlalchemy import delete, select, and_, update
 from sqlalchemy.engine import Result
 
 from infrastructure.error.error import NotFoundError
@@ -45,4 +45,10 @@ class BaseRepository:
             await session.execute(query)
             await session.commit()
             
+    async def _update(self, instance: Base) -> Base:
+        async with transaction() as session:
+            merged_instance = await session.merge(instance)
+            await session.commit()
+            await session.refresh(merged_instance)
+            return merged_instance.__dict__
     

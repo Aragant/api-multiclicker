@@ -10,6 +10,7 @@ class User(Base):
     username = Column(String, unique=True)
     password = Column(String, nullable=True)
     provider = Column(String, default="local", nullable=True)
+    description = Column(String, nullable=True)
     disabled = Column(Boolean, default=False)
     register_date = Column(DateTime, default=func.now())
     __table_args__ = (UniqueConstraint('username', 'provider', name='unique_username_per_provider'),)

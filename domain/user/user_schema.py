@@ -11,6 +11,7 @@ class UserPrivate(BaseModel):
     id: str
     username: str
     disabled: bool
+    description: Optional[str]
     
 class UserForLogin(BaseModel):
     id: str
@@ -20,3 +21,6 @@ class UserForLogin(BaseModel):
 class UserSignUp(BaseModel):
     username: str
     password: Optional[str] = None
+    
+class UserUpdate(BaseModel):
+    description: Optional[str]

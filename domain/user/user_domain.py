@@ -3,7 +3,7 @@
 from domain.user.user_model import User
 from infrastructure.security.password_hash_service import get_password_hash
 from domain.user.user_repository import UserRepository
-from domain.user.user_schema import UserSignUp
+from domain.user.user_schema import UserSignUp, UserUpdate
 from infrastructure.logging.logging_config import logger
 
 
@@ -40,4 +40,13 @@ class UserDomain:
     async def get_by_id(self, id: str):
         user = await UserRepository().get_by_id(id)
         logger.info("User found : %s", user)
+        return user
+    
+    async def update(self, userData: UserUpdate, id: str):
+        user = User(
+            id=id,
+            **userData.model_dump(exclude_unset=True)
+        )
+        user = await UserRepository().update(user)
+        logger.info("User updated : %s", user)
         return user
