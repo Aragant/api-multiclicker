@@ -19,6 +19,13 @@ class UserRepository(BaseRepository):
         user = await self._get(id=id, disabled=False)
         return UserPrivate.model_validate(user)
     
+    async def get_by_email(self, email: str) -> UserPrivate | None:
+        user = await self._get(email=email, disabled=False)
+        if not user:
+            return None
+        
+        return UserPrivate.model_validate(user)
+    
     async def save(self, user: User) -> UserPrivate:
         user = await self._save(user)
         return UserPrivate.model_validate(user)

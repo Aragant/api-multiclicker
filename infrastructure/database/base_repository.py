@@ -24,7 +24,7 @@ class BaseRepository:
             
             
             if _result is None:
-                raise NotFoundError(ressource=self.schema_class.__name__ + " with this conditions: " + " and ".join(list(kwargs.keys())))
+                return None
 
             return _result.__dict__
 
