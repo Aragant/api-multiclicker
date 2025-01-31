@@ -6,31 +6,22 @@ from domain.user.user_schema import UserFlat, UserForLogin, UserPrivate
 class UserRepository(BaseRepository):
     schema_class = User
     
-    async def get_by_username(self, username: str) -> UserFlat:
-        user = await self._get(username=username, disabled=False)
-        return UserFlat.model_validate(user)
-    
-    async def get_by_username_for_login(self, username: str) -> UserForLogin:
-        # self.get take **kwargs as arguments
-        user = await self._get(username=username, disabled=False)
-        return UserForLogin.model_validate(user)
-    
-    async def get_by_id(self, id: str) -> UserPrivate:
-        user = await self._get(id=id, disabled=False)
-        return UserPrivate.model_validate(user)
-    
-    async def get_by_email(self, email: str) -> UserPrivate | None:
-        user = await self._get(email=email, disabled=False)
-        if not user:
-            return None
+    async def get_by_username(self, username: str):
+        return await self._get(username=username, disabled=False)
         
-        return UserPrivate.model_validate(user)
     
-    async def save(self, user: User) -> UserPrivate:
-        user = await self._save(user)
-        return UserPrivate.model_validate(user)
+    async def get_by_username_for_login(self, username: str):
+        return  await self._get(username=username, disabled=False)
     
-    async def update(self, user: User) -> UserPrivate:
-        user = await self._update(user)
-        return UserPrivate.model_validate(user)
+    async def get_by_id(self, id: str):
+        return await self._get(id=id, disabled=False)
+    
+    async def get_by_email(self, email: str):
+        return await self._get(email=email, disabled=False)
+    
+    async def save(self, user: User):
+        return await self._save(user)
+    
+    async def update(self, user: User):
+        return await self._update(user)
     

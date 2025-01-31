@@ -35,7 +35,7 @@ google_sso = GoogleSSO(
 router = APIRouter(prefix="/google", tags=["auth"])
 
 
-@router.get("/login", tags=['Google SSO'])
+@router.get("/login")
 async def google_login():
     async with google_sso:
         return await google_sso.get_login_redirect(params={"prompt": "consent", "access_type": "offline"})
