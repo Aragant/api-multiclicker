@@ -35,7 +35,7 @@ class BaseRepository:
         """Save or update an instance"""
         async with self.transaction() as session:
             session.add(instance)
-            await session.commit()
+            await session.flush()
             await session.refresh(instance)
             return instance.__dict__
         
@@ -45,12 +45,12 @@ class BaseRepository:
         
         async with self.transaction() as session:
             await session.execute(query)
-            await session.commit()
+            await session.flush()
             
     async def _update(self, instance: Base) -> Base:
         async with self.transaction() as session:
             merged_instance = await session.merge(instance)
-            await session.commit()
+            await session.flush()
             await session.refresh(merged_instance)
             return merged_instance.__dict__
     
