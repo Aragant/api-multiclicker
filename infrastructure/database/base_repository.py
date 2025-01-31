@@ -10,15 +10,17 @@ from infrastructure.error.error import NotFoundError
 
 
 class BaseRepository:
-    schema: Type[Base]
     
+    def __init__(self, schema: Type[Base], transaction = transaction):
+        self.schema_class = schema
+        self.transaction = transaction
     
     async def _get(self, **kwargs) -> Base:
         """Return only one result by filters"""
         conditions = [getattr(self.schema_class, key) == value for key, value in kwargs.items()]
         query = select(self.schema_class).where(and_(*conditions))
         
-        async with transaction() as session:
+        async with self.transaction() as session:
             result: Result = await session.execute(query)
             _result = result.scalars().one_or_none()
             
@@ -31,7 +33,7 @@ class BaseRepository:
 
     async def _save(self, instance: Base) -> Base:
         """Save or update an instance"""
-        async with transaction() as session:
+        async with self.transaction() as session:
             session.add(instance)
             await session.commit()
             await session.refresh(instance)
@@ -41,12 +43,12 @@ class BaseRepository:
         conditions = [getattr(self.schema_class, key) == value for key, value in kwargs.items()]
         query = delete(self.schema_class).where(and_(*conditions))
         
-        async with transaction() as session:
+        async with self.transaction() as session:
             await session.execute(query)
             await session.commit()
             
     async def _update(self, instance: Base) -> Base:
-        async with transaction() as session:
+        async with self.transaction() as session:
             merged_instance = await session.merge(instance)
             await session.commit()
             await session.refresh(merged_instance)

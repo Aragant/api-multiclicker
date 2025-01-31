@@ -4,7 +4,9 @@ from domain.user.user_schema import UserFlat, UserForLogin, UserPrivate
 
 
 class UserRepository(BaseRepository):
-    schema_class = User
+    
+    def __init__(self):
+        super().__init__(User)
     
     async def get_by_username(self, username: str):
         return await self._get(username=username, disabled=False)

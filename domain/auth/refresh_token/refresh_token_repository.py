@@ -2,12 +2,12 @@ from sqlalchemy.orm import Session
 from domain.auth.refresh_token.refresh_token_model import RefreshToken
 from datetime import datetime, timezone
 from domain.auth.refresh_token.refresh_token_schema import RefreshTokenFlat
-from infrastructure.database import transaction
 from infrastructure.database.base_repository import BaseRepository
 
 class RefreshTokenRepository(BaseRepository):
-    schema_class = RefreshToken
-    
+    def __init__(self):
+        super().__init__(RefreshToken)
+        
     async def save(self, instance: RefreshToken) -> RefreshToken:
         return await self._save(instance)
     
