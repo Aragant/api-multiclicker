@@ -1,23 +1,19 @@
 from datetime import timedelta
+import os
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import BaseModel
 
-from domain.auth.authentication_service import authenticate_user, create_access_token, create_refresh_token, get_current_active_user
+from domain.auth.authentication_service import authenticate_user, create_access_token, create_refresh_token
 from domain.auth.refresh_token.refresh_token_model import RefreshToken
 from domain.auth.refresh_token.refresh_token_repository import RefreshTokenRepository
-from domain.user.user_schema import UserPrivate
+
+from domain.auth.token_schema import Token
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
-REFRESH_TOKEN_EXPIRE_DAYS = 7
 
-class Token(BaseModel):
-    access_token: str
-    refresh_token: str
-    token_type: str
+
 
 
 @router.post("/login")
@@ -32,7 +28,8 @@ async def login_for_access_token(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(minutes=int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")))
+    
     access_token = create_access_token(
         data={"sub": user.id}, expires_delta=access_token_expires
     )
@@ -41,7 +38,7 @@ async def login_for_access_token(
     request_user_agent = request.headers.get("User-Agent")
     
     refresh_token = create_refresh_token(
-        data={"sub": user.id}, expires_delta=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+        data={"sub": user.id}, expires_delta=timedelta(days=int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS")))
     )
     
     await RefreshTokenRepository().save(RefreshToken(user_id=user.id, refresh_token=refresh_token, ip_address=request_ip, user_agent=request_user_agent))
