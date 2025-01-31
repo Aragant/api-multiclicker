@@ -7,5 +7,5 @@ async def init_database():
 
 
 async def create_main_user():
-    user: UserSignUp = UserSignUp(username="admin", password="admin")
+    user: UserSignUp = UserSignUp(username="admin", password="admin", email="admin")
     await UserDomain().create(user)

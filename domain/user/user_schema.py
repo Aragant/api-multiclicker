@@ -9,7 +9,8 @@ class UserFlat(BaseModel):
     
 class UserPrivate(BaseModel):
     id: str
-    username: str
+    email: str
+    username: Optional[str]
     disabled: bool
     description: Optional[str]
     
@@ -19,8 +20,9 @@ class UserForLogin(BaseModel):
     password: str
     
 class UserSignUp(BaseModel):
-    username: str
+    username: Optional[str] = None
     password: Optional[str] = None
+    email: str
     
 class UserUpdate(BaseModel):
     description: Optional[str]

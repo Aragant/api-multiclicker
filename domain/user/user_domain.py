@@ -23,7 +23,8 @@ class UserDomain:
         user = User(
             username=user.username,
             password=password,
-            provider=provider
+            provider=provider,
+            email=user.email,
         )
         new_user = await UserRepository().save(user)
         
