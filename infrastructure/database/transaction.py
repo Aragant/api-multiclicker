@@ -12,8 +12,8 @@ import inspect
 async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 @asynccontextmanager
-async def transaction(async_session=async_session):
-    session: AsyncSession = async_session()
+async def transaction(custom_session = None):
+    session: AsyncSession = custom_session or async_session()
     try:
         yield session
         await session.commit()
