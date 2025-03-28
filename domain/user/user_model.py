@@ -1,8 +1,8 @@
 import uuid
 from sqlalchemy import Boolean, Column, DateTime, Integer, String, UniqueConstraint
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship, Mapped
 from infrastructure.database.database import Base
-
 
 class User(Base):
     __tablename__ = "users"
@@ -15,6 +15,8 @@ class User(Base):
     disabled = Column(Boolean, default=False)
     register_date = Column(DateTime, default=func.now())
     __table_args__ = (UniqueConstraint('email', 'provider', name='unique_email_per_provider'),)
+
+    guild: Mapped["Guild"] = relationship("Guild", back_populates="user")
 
     @property
     def as_dict(self):
