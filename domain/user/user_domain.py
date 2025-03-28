@@ -26,7 +26,8 @@ class UserDomain:
             provider=provider,
             email=user.email,
         )
-        new_user = await UserRepository().save(user)
+        
+        new_user = await UserRepository().save(user) # created user
         
         logger.info("User created : %s", new_user)
         return UserPrivate.model_validate(new_user)
