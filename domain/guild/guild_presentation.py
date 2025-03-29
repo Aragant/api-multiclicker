@@ -8,11 +8,11 @@ from domain.auth.authentication_service import get_current_active_user
 
 router = APIRouter(prefix="/guild", tags=["guild"])
 
+
 @router.post("")
 async def create_guild_route(
     current_user: Annotated[UserPrivate, Depends(get_current_active_user)],
-    guild: GuildCreateRequestBody):
-    
+    guild: GuildCreateRequestBody,
+):
     guild = await GuildDomain().create(guild, current_user.id)
     return guild
-

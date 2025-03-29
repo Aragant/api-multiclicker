@@ -1,35 +1,32 @@
-from typing import Any, Type
+from typing import Type
 from unittest.mock import Base
 
 from infrastructure.database.transaction import transaction
-from sqlalchemy import delete, select, and_, update
+from sqlalchemy import delete, select, and_
 from sqlalchemy.engine import Result
-
-from infrastructure.error.error import NotFoundError
 
 
 
 class BaseRepository:
-    
-    def __init__(self, schema: Type[Base], transaction = transaction):
+    def __init__(self, schema: Type[Base], transaction=transaction):
         self.schema_class = schema
         self.transaction = transaction
-    
+
     async def _get(self, **kwargs) -> Base:
         """Return only one result by filters"""
-        conditions = [getattr(self.schema_class, key) == value for key, value in kwargs.items()]
+        conditions = [
+            getattr(self.schema_class, key) == value for key, value in kwargs.items()
+        ]
         query = select(self.schema_class).where(and_(*conditions))
-        
+
         async with self.transaction() as session:
             result: Result = await session.execute(query)
             _result = result.scalars().one_or_none()
-            
-            
+
             if _result is None:
                 return None
 
             return _result.__dict__
-
 
     async def _save(self, instance: Base) -> Base:
         """Save or update an instance"""
@@ -38,19 +35,20 @@ class BaseRepository:
             await session.flush()
             await session.refresh(instance)
             return instance.__dict__
-        
+
     async def _delete(self, **kwargs) -> None:
-        conditions = [getattr(self.schema_class, key) == value for key, value in kwargs.items()]
+        conditions = [
+            getattr(self.schema_class, key) == value for key, value in kwargs.items()
+        ]
         query = delete(self.schema_class).where(and_(*conditions))
-        
+
         async with self.transaction() as session:
             await session.execute(query)
             await session.flush()
-            
+
     async def _update(self, instance: Base) -> Base:
         async with self.transaction() as session:
             merged_instance = await session.merge(instance)
             await session.flush()
             await session.refresh(merged_instance)
             return merged_instance.__dict__
-    
