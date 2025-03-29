@@ -8,7 +8,6 @@ class GuildDomain:
         guild = Guild(
             name=newGuild.name,
             description=newGuild.description,
-            owner_id=owner_id,
         )
         
         created_guild = await GuildRepository().save(guild)

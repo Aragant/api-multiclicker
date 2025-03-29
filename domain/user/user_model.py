@@ -1,3 +1,4 @@
+from typing import Optional
 import uuid
 from sqlalchemy import Boolean, Column, DateTime, String, UniqueConstraint, ForeignKey
 from sqlalchemy.sql import func
@@ -14,12 +15,16 @@ class User(Base):
     description = Column(String, nullable=True)
     disabled = Column(Boolean, default=False)
     register_date = Column(DateTime, default=func.now())
-    my_guild_id: Mapped[str] = mapped_column(ForeignKey("guild.id"), nullable=True)
-    ownered_guild_id: Mapped[str] = mapped_column(ForeignKey("guild.id"), nullable=True)
-    __table_args__ = (UniqueConstraint('email', 'provider', name='unique_email_per_provider'),)
 
-    ownered_guild: Mapped["Guild"] = relationship("Guild", back_populates="owner", foreign_keys=[ownered_guild_id])
-    my_guild: Mapped["Guild"] = relationship("Guild", foreign_keys=[my_guild_id])
+    # Relation One-to-One : un utilisateur peut posséder une seule guilde
+    owned_guild_id: Mapped[Optional[str]] = mapped_column(ForeignKey("guild.id", ondelete="SET NULL"), unique=True)
+    owned_guild = relationship("Guild", back_populates="owner", foreign_keys=[owned_guild_id], uselist=False)
+
+    # Relation Many-to-One : un utilisateur peut appartenir à une guilde
+    guild_id: Mapped[Optional[str]] = mapped_column(ForeignKey("guild.id", ondelete="SET NULL"))
+    guild = relationship("Guild", back_populates="members", foreign_keys=[guild_id])
+
+    __table_args__ = (UniqueConstraint('email', 'provider', name='unique_email_per_provider'),)
 
     @property
     def as_dict(self):
