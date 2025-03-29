@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from infrastructure.database.database import Base
 
+
 class FakeModel(Base):
     __tablename__ = "fake_model"
 

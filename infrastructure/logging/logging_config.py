@@ -22,13 +22,16 @@ LOGGING_CONFIG = {
             "class": "logging.FileHandler",
             "formatter": "default",
             "filename": "logs/app.log",  # Chemin du fichier de log
-            "mode": "a",           # Mode d'écriture : 'a' pour ajouter, 'w' pour écraser
-            "encoding": "utf-8",   # Encodage du fichier
+            "mode": "a",  # Mode d'écriture : 'a' pour ajouter, 'w' pour écraser
+            "encoding": "utf-8",  # Encodage du fichier
         },
     },
     "root": {
         "level": "INFO",
-        "handlers": ["console", "file"],  # Envoie les logs à la fois dans la console et le fichier
+        "handlers": [
+            "console",
+            "file",
+        ],  # Envoie les logs à la fois dans la console et le fichier
     },
 }
 
@@ -40,4 +43,3 @@ separator_line = "=" * 30  # Une ligne de 80 caractères
 logger.info(separator_line)
 logger.info("  Lancement de l'application")
 logger.info(separator_line)
-
