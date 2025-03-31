@@ -2,36 +2,34 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from domain.auth.authentication_service import get_current_active_user
-from domain.user.user_schema import UserFlat, UserPrivate, UserSignUp, UserUpdate
-from domain.user.user_domain import UserDomain
+from domain.user.use_cases import get_own_profile, get_profile, signup, update_profile
+from domain.user.user_schema import UserPrivate, UserPublic, UserSignUp, UserUpdate
 
 
 router = APIRouter(prefix="/user", tags=["user"])
 
 
-@router.get("")
-async def get_user_route(username: str):
-    user: UserFlat = await UserDomain().get_by_username(username)
-    return user
+@router.get("", response_model=UserPublic)
+async def get_profile_route(id: str):
+    return await get_profile(id)
+    
 
 
 @router.post("")
-async def create_user_route(user: UserSignUp):
-    user = await UserDomain().create(user)
-    return user
+async def signup_user_route(user: UserSignUp):
+    return await signup(user)
 
 
 @router.get("/me/", response_model=UserPrivate)
-async def get_current_user_route(
+async def get_own_profile_route(
     current_user: Annotated[UserPrivate, Depends(get_current_active_user)],
 ):
-    return current_user
+    return await get_own_profile(current_user.id)
 
 
 @router.put("/update", response_model=UserPrivate)
-async def update_user_route(
+async def update_profile_route(
     current_user: Annotated[UserPrivate, Depends(get_current_active_user)],
     user: UserUpdate,
 ):
-    user = await UserDomain().update(user, current_user.id)
-    return user
+    return await update_profile(user, current_user.id)

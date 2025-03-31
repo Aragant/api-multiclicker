@@ -7,7 +7,7 @@ from fastapi_sso import GoogleSSO
 from domain.auth.authentication_service import create_access_token, create_refresh_token
 from domain.auth.refresh_token.refresh_token_model import RefreshToken
 from domain.auth.refresh_token.refresh_token_repository import RefreshTokenRepository
-from domain.user.user_domain import UserDomain
+from domain.user.user_service import UserService
 from domain.user.user_model import User
 from domain.auth.token_schema import Token
 
@@ -46,12 +46,12 @@ async def google_callback(request: Request):
             user = await google_sso.verify_and_process(request)
 
         print(user)
-        user_stored = await UserDomain().get_by_email(user.email)
+        user_stored = await UserService().get_by_email(user.email)
         if not user_stored:
             user_to_add = User(
                 email=user.email,
             )
-            user_stored = await UserDomain().create(user_to_add, provider=user.provider)
+            user_stored = await UserService().create(user_to_add, provider=user.provider)
 
         access_token = create_access_token(
             data={"sub": user_stored.id},

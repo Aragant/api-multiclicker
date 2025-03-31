@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
-from domain.user.user_domain import UserDomain
+from domain.user.user_service import UserService
 from jwt.exceptions import InvalidTokenError
 import jwt
 
@@ -23,7 +23,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
 async def authenticate_user(username: str, password: str):
-    user: UserForLogin = await UserDomain().get_by_username_for_login(username)
+    user: UserForLogin = await UserService().get_by_username_for_login(username)
     if not user:
         return False
     if not verify_password(password, user.password):
@@ -69,7 +69,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         token_data = TokenData(id=id)
     except InvalidTokenError:
         raise credentials_exception
-    user = await UserDomain().get_by_id(id=token_data.id)
+    user = await UserService().get_by_id(id=token_data.id)
     if user is None:
         raise credentials_exception
     return user
