@@ -5,9 +5,9 @@ from infrastructure.database.base_repository import BaseRepository
 from fake_model import FakeModel
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="function")
 async def repo(async_session):
-    return BaseRepository(FakeModel, lambda: transaction(async_session))
+    return BaseRepository(FakeModel, lambda: transaction(async_session, commit=False))
 
 
 @pytest.mark.asyncio
@@ -15,11 +15,10 @@ async def test_get_when_the_data_exists_should_return_it(async_session, repo):
     """Teste la récupération d'un élément dans la base de données."""
     async with async_session as session:
         session.add(FakeModel(id=1, username="test"))
-        await session.commit()
 
-    result = await repo._get(id=1)
-    assert result.get("id") == 1
-    assert result.get("username") == "test"
+        result = await repo._get(id=1)
+        assert result.get("id") == 1
+        assert result.get("username") == "test"
     
     
 @pytest.mark.asyncio
