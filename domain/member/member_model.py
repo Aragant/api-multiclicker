@@ -5,8 +5,8 @@ from sqlalchemy import Column, String, ForeignKey, Integer
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from infrastructure.database.database import Base
 
-class MemberRight(Enum):
-    PENDING = 0
+class MemberRole(Enum):
+    APPLICANT = 0
     MEMBER = 1
     MASTER = 2
     
@@ -20,7 +20,7 @@ class Member(Base):
     )
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=False)
     guild_id: Mapped[str] = mapped_column(ForeignKey("guild.id", ondelete="SET NULL"), nullable=False)
-    right = Column(Integer, default=MemberRight.PENDING.value)
+    role = Column(Integer, default=MemberRole.APPLICANT.value)
 
     # Relation One-to-Many : un membre appartient à une guilde
     guild = relationship("Guild", back_populates="members")

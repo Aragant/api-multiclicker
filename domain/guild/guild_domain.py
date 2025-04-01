@@ -5,7 +5,7 @@ from domain.guild.guild_repository import GuildRepository
 
 class GuildDomain:
     async def create(
-        self, newGuild: GuildCreateRequestBody, owner_id: str
+        self, newGuild: GuildCreateRequestBody
     ) -> GuildFlat:
         guild = Guild(
             name=newGuild.name,
