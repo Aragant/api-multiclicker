@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from infrastructure.database.database import Base
@@ -26,5 +27,21 @@ async def async_session(engine):
 
     async with async_session_factory() as session:
         yield session
-        print("ouuuuiii rollback")
         await session.rollback()
+        
+
+
+
+@asynccontextmanager
+@pytest_asyncio.fixture(scope="function")
+async def transaction(async_session):
+    session: AsyncSession = async_session
+    try:
+        yield session
+        await session.rollback()
+    except Exception as e:
+        await session.rollback()
+        print("PRINT", e)
+        raise e
+    finally:
+        await session.close()

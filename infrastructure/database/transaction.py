@@ -13,8 +13,7 @@ async def transaction(custom_session=None, commit=True):
     session: AsyncSession = custom_session or async_session()
     try:
         yield session
-        if commit:
-            await session.commit()
+        await session.commit()
     except Exception as e:
         await session.rollback()
         database_error_logger(e)

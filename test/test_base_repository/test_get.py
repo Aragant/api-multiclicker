@@ -1,13 +1,12 @@
 import pytest
 import pytest_asyncio
-from infrastructure.database.transaction import transaction
 from infrastructure.database.base_repository import BaseRepository
 from fake_model import FakeModel
 
 
 @pytest_asyncio.fixture(scope="function")
-async def repo(async_session):
-    return BaseRepository(FakeModel, lambda: transaction(async_session, commit=False))
+async def repo(transaction):
+    return BaseRepository(FakeModel, lambda: transaction)
 
 
 @pytest.mark.asyncio
