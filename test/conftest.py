@@ -2,7 +2,10 @@ import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from infrastructure.database.database import Base
 
-DATABASE_URL = "sqlite+aiosqlite:///:memory:"  # Base de données en mémoire pour les tests
+DATABASE_URL = (
+    "sqlite+aiosqlite:///:memory:"  # Base de données en mémoire pour les tests
+)
+
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
 async def engine():
@@ -13,11 +16,13 @@ async def engine():
     yield engine
     await engine.dispose()
 
+
 @pytest_asyncio.fixture(scope="session")
 async def async_session(engine):
     """Crée une session asynchrone."""
-    async_session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+    async_session_factory = async_sessionmaker(
+        engine, class_=AsyncSession, expire_on_commit=False
+    )
     async with async_session_factory() as session:
         yield session
         await session.rollback()
-

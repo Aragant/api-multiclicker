@@ -5,7 +5,6 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
 from domain.user.user_domain import UserDomain
-from domain.user.user_repository import UserRepository
 from jwt.exceptions import InvalidTokenError
 import jwt
 
@@ -15,11 +14,9 @@ from infrastructure.security.token_data import TokenData
 from infrastructure.logging.logging_config import logger
 
 
-
 ALGORITHM = "HS256"
 SECRET_KEY = os.environ.get("SECRET_KEY")
 SECRET_REFRESH_KEY = os.environ.get("SECRET_REFRESH_KEY")
-
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
@@ -31,9 +28,10 @@ async def authenticate_user(username: str, password: str):
         return False
     if not verify_password(password, user.password):
         return False
-    
+
     logger.info("Utilisateur connecté : %s", user.username)
     return user
+
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
@@ -45,6 +43,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+
 def create_refresh_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     if expires_delta:
@@ -54,7 +53,6 @@ def create_refresh_token(data: dict, expires_delta: timedelta | None = None):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_REFRESH_KEY, algorithm=ALGORITHM)
     return encoded_jwt
-
 
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
@@ -75,6 +73,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     if user is None:
         raise credentials_exception
     return user
+
 
 async def get_current_active_user(
     current_user: Annotated[UserPrivate, Depends(get_current_user)],
