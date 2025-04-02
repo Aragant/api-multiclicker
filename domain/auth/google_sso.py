@@ -7,7 +7,7 @@ from fastapi_sso import GoogleSSO
 from domain.auth.authentication_service import create_access_token, create_refresh_token
 from domain.auth.refresh_token.refresh_token_model import RefreshToken
 from domain.auth.refresh_token.refresh_token_repository import RefreshTokenRepository
-from domain.user.user_domain import UserDomain
+from domain.user.user_service import UserService
 from domain.user.user_model import User
 from domain.auth.token_schema import Token
 
@@ -19,7 +19,6 @@ GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 # Utilisée pour désactiver l'exigence d'une connexion sécurisée (HTTPS) lors de l'utilisation de la bibliothèque oauthlib, qui est sous-jacente à fastapi_sso.
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
-print(os.getenv("HOST"))
 
 google_sso = GoogleSSO(
     GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, f"{os.getenv('HOST')}/google/callback"
@@ -45,13 +44,12 @@ async def google_callback(request: Request):
         async with google_sso:
             user = await google_sso.verify_and_process(request)
 
-        print(user)
-        user_stored = await UserDomain().get_by_email(user.email)
+        user_stored = await UserService().get_by_email(user.email)
         if not user_stored:
             user_to_add = User(
                 email=user.email,
             )
-            user_stored = await UserDomain().create(user_to_add, provider=user.provider)
+            user_stored = await UserService().create(user_to_add, provider=user.provider)
 
         access_token = create_access_token(
             data={"sub": user_stored.id},

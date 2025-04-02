@@ -9,7 +9,7 @@ async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 
 @asynccontextmanager
-async def transaction(custom_session=None):
+async def transaction(custom_session=None, commit=True):
     session: AsyncSession = custom_session or async_session()
     try:
         yield session

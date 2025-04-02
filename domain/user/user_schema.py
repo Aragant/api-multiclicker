@@ -14,6 +14,12 @@ class UserPrivate(BaseModel):
     username: Optional[str]
     disabled: bool
     description: Optional[str]
+    
+    
+class UserPublic(BaseModel):
+    id: str
+    username: str
+    description: Optional[str]
 
 
 class UserForLogin(BaseModel):

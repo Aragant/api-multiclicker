@@ -1,4 +1,4 @@
-from domain.user.user_domain import UserDomain
+from domain.user.user_service import UserService
 from domain.user.user_schema import UserSignUp
 
 
@@ -8,4 +8,4 @@ async def init_database():
 
 async def create_main_user():
     user: UserSignUp = UserSignUp(username="admin", password="admin", email="admin")
-    await UserDomain().create(user)
+    await UserService().create(user)
