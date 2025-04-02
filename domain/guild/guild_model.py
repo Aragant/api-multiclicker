@@ -18,20 +18,9 @@ class Guild(Base):
     description = Column(String, nullable=True)
     disable = Column(Boolean, default=False)
     create_date = Column(DateTime, default=func.now())
-
-    # Relation One-to-One : un propriétaire de guilde
-    owner = relationship(
-        "User",
-        back_populates="owned_guild",
-        foreign_keys="[User.owned_guild_id]",
-        uselist=False,
-    )
-
-    # Relation One-to-Many : une guilde a plusieurs membres
-    members = relationship(
-        "User", back_populates="guild", foreign_keys="[User.guild_id]"
-    )
-
+    # Relation Many-to-Many via Member
+    members = relationship("Member", back_populates="guild", cascade="all, delete-orphan")
+        
     @property
     def as_dict(self):
         """Returns the object as a dictionary"""
