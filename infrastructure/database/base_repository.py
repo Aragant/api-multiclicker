@@ -28,6 +28,17 @@ class BaseRepository:
 
             return _result.__dict__
 
+    async def _get_all(self, options: list = None) -> Base:
+        """Return all results with optional relation loading"""
+        query = select(self.schema_class)
+
+        if options:
+            query = query.options(*options)
+
+        async with self.transaction() as session:
+            result: Result = await session.execute(query)
+            return result.scalars().all()
+
     async def _save(self, instance: Base) -> Base:
         """Save or update an instance"""
         async with self.transaction() as session:

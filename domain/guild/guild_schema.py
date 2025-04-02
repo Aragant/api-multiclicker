@@ -15,3 +15,9 @@ class GuildFlat(BaseModel):
     id: str
     name: str
     description: str
+
+class GuildWithMembers(BaseModel):
+    id: str
+    name: str
+    description: str
+    sum_member: int

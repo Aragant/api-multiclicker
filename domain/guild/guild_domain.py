@@ -1,4 +1,4 @@
-from domain.guild.guild_schema import GuildFlat, GuildCreateRequestBody
+from domain.guild.guild_schema import GuildFlat, GuildCreateRequestBody, GuildWithMembers
 from domain.guild.guild_model import Guild
 from domain.member.member_model import Member, MemberRole
 from domain.guild.guild_repository import GuildRepository
@@ -25,3 +25,16 @@ class GuildDomain:
                     detail=f"Une guilde avec le nom '{newGuild.name}' existe déjà."
                 )
             raise e
+        
+    async def get_all(self) -> list[GuildWithMembers]:
+        guilds = await GuildRepository().get_all()
+
+        return [
+            GuildWithMembers(
+                id=guild.id,
+                name=guild.name,
+                description=guild.description,
+                sum_member=len(guild.members) 
+            )
+            for guild in guilds
+        ]
