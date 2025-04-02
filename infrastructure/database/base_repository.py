@@ -6,19 +6,21 @@ from sqlalchemy import delete, select, and_
 from sqlalchemy.engine import Result
 
 
-
 class BaseRepository:
     def __init__(self, schema: Type[Base], transaction=transaction):
         self.schema_class = schema
         self.transaction = transaction
 
-    async def _get(self, **kwargs) -> Base:
+    async def _get(self, options: list = None, **kwargs) -> Base:
         """Return only one result by filters"""
         conditions = [
             getattr(self.schema_class, key) == value for key, value in kwargs.items()
         ]
         query = select(self.schema_class).where(and_(*conditions))
 
+        if options:
+            query = query.options(*options)
+            
         async with self.transaction() as session:
             result: Result = await session.execute(query)
             _result = result.scalars().one_or_none()
