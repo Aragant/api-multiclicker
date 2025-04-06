@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from infrastructure.error.error import DatabaseError, DuplicateEntryError, NotFoundError
 
 
+
 def setup_exepction_handlers(app):
     @app.exception_handler(NotFoundError)
     async def not_found_handler(request: Request, exc: NotFoundError):
@@ -16,7 +17,7 @@ def setup_exepction_handlers(app):
             content={"DatabaseError": "Database error", "details": f"{exc}"},
             status_code=500,
         )
-        
+    
     @app.exception_handler(DuplicateEntryError)
     async def duplicate_entry_handler(request: Request, exc: DuplicateEntryError):
         return JSONResponse(

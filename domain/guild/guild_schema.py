@@ -10,12 +10,10 @@ class GuildCreateRequestBody(BaseModel):
     name: str
     description: str
 
-
 class GuildFlat(BaseModel):
     id: str
     name: str
     description: str
-
 
 class GuildWithSumMembers(BaseModel):
     id: str
