@@ -8,3 +8,7 @@ class NotFoundError(Exception):
 class DatabaseError(Exception):
     def __init__(self):
         pass
+
+class ConflictError(Exception):
+    def __init__(self, detail: str):
+        self.detail = detail

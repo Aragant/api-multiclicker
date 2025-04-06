@@ -1,6 +1,6 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
-from infrastructure.error.error import DatabaseError, NotFoundError
+from infrastructure.error.error import DatabaseError, NotFoundError, ConflictError
 
 
 def setup_exepction_handlers(app):
@@ -15,4 +15,10 @@ def setup_exepction_handlers(app):
         return JSONResponse(
             content={"DatabaseError": "Database error", "details": f"{exc}"},
             status_code=500,
+        )
+    @app.exception_handler(ConflictError)
+    async def conflict_error_handler(request: Request, exc: ConflictError):
+        return JSONResponse(
+            content={"ConflictError": exc.detail},
+            status_code=409
         )

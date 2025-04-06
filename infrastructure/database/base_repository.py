@@ -39,7 +39,9 @@ class BaseRepository:
 
         async with self.transaction() as session:
             result: Result = await session.execute(query)
-            return result.scalars().all()
+            instances = result.scalars().all() 
+            
+            return [instance.__dict__ for instance in instances]
 
     async def _save(self, instance: Base) -> Base:
         """Save or update an instance"""
