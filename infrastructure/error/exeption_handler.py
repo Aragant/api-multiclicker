@@ -1,8 +1,6 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
-from infrastructure.error.error import DatabaseError, DuplicateEntryError, NotFoundError
-
-
+from infrastructure.error.error import DatabaseError, DuplicateEntryError, NotFoundError, ForbiddenError
 
 def setup_exepction_handlers(app):
     @app.exception_handler(NotFoundError)
@@ -24,6 +22,15 @@ def setup_exepction_handlers(app):
             status_code=409,  # Code HTTP 409 pour conflit
             content={
                 "error": "Duplicate entry",
-                "details": str(exc)  # Affiche le message de l'exception dans la réponse
+                "details": str(exc) 
+            }
+        )
+    @app.exception_handler(ForbiddenError)
+    async def forbidden_error_handler(request: Request, exc: ForbiddenError):
+        return JSONResponse(
+            status_code=403,
+            content={
+                "error": "Forbidden",
+                "message": str(exc) 
             }
         )

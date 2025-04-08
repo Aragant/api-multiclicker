@@ -16,3 +16,6 @@ class DuplicateEntryError(Exception):
     def __init__(self, message: str):
         super().__init__(message)
 
+class ForbiddenError(Exception):
+    def __init__(self, message: str):
+        super().__init__(message)
