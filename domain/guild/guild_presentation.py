@@ -1,8 +1,8 @@
 from domain.guild.use_cases import create, get_all, get_by_id
 from fastapi import APIRouter, Depends
 from typing import Annotated
-
-from domain.guild.guild_schema import GuildCreateRequestBody, GuildWithSumMembers, GuildWithMembers
+from domain.guild.use_cases import update_my_guild
+from domain.guild.guild_schema import GuildCreateRequestBody, GuildFlat, GuildUpdateRequestBody, GuildWithSumMembers, GuildWithMembers
 from domain.user.user_schema import UserPrivate
 from domain.auth.authentication_service import get_current_active_user
 from fastapi import HTTPException
@@ -28,3 +28,10 @@ async def get_guild_by_id(guild_id: str):
     if not guild:
         raise HTTPException(status_code=404, detail="Guilde non trouvée")
     return guild
+
+@router.patch("/me", response_model=GuildFlat)
+async def patch_my_guild(
+    current_user: Annotated[UserPrivate, Depends(get_current_active_user)],
+    updates: GuildUpdateRequestBody,
+):
+    return await update_my_guild(current_user.id, updates)
