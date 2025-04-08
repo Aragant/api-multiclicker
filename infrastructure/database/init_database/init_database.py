@@ -5,7 +5,10 @@ from domain.guild.guild_schema import GuildCreateRequestBody
 
 
 async def init_database():
+    await create_user("chris")
+    await create_user("duo")
     admin = await create_main_user()
+
     guild = await create(
         GuildCreateRequestBody(name="guild1", description="admin"), admin.id
     )
@@ -14,4 +17,9 @@ async def init_database():
 
 async def create_main_user() -> UserPrivate:
     user: UserSignUp = UserSignUp(username="admin", password="admin", email="admin")
+    return await UserService().create(user)
+
+
+async def create_user(duo: str) -> UserPrivate:
+    user: UserSignUp = UserSignUp(username=duo, password=duo, email=duo)
     return await UserService().create(user)

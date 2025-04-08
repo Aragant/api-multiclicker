@@ -13,14 +13,19 @@ class BaseRepository:
 
     async def _get(self, options: list = None, **kwargs) -> Base:
         """Return only one result by filters"""
-        conditions = [
-            getattr(self.schema_class, key) == value for key, value in kwargs.items()
-        ]
+        conditions = []
+        for key, value in kwargs.items():
+            column = getattr(self.schema_class, key)
+            if isinstance(value, list):
+                conditions.append(column.in_(value))
+            else:
+                conditions.append(column == value)
+
         query = select(self.schema_class).where(and_(*conditions))
 
         if options:
             query = query.options(*options)
-            
+
         async with self.transaction() as session:
             result: Result = await session.execute(query)
             _result = result.scalars().one_or_none()
@@ -39,8 +44,8 @@ class BaseRepository:
 
         async with self.transaction() as session:
             result: Result = await session.execute(query)
-            instances = result.scalars().all() 
-            
+            instances = result.scalars().all()
+
             return [instance.__dict__ for instance in instances]
 
     async def _save(self, instance: Base) -> Base:
