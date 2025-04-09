@@ -8,6 +8,6 @@ async def get_by_id( guild_id: str) -> GuildWithMembers:
             return None
         
         guild["sum_member"] = len(guild['members'])
-        guild["members"] = [member.user.username for member in guild['members']]  
+        guild["members"] = [member.user.username if member.user else "Unknown User" for member in guild['members']]  
         
         return GuildWithMembers.model_validate(guild)
