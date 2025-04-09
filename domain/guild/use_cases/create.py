@@ -1,4 +1,5 @@
-from sqlite3 import IntegrityError
+from sqlite3 import IntegrityError as SQLiteIntegrityError
+from sqlalchemy.exc import IntegrityError as SQLAlchemyIntegrityError
 from domain.guild.guild_model import Guild
 from domain.guild.guild_repository import GuildRepository
 from domain.guild.guild_schema import GuildCreateRequestBody, GuildFlat
@@ -15,7 +16,9 @@ async def create(newGuild: GuildCreateRequestBody, user_id: str) -> GuildFlat:
             )
             created_guild = await GuildRepository().save(guild)
             return GuildFlat.model_validate(created_guild)
-        except IntegrityError as e:
-            if "guild_name_key" in str(e.orig):
+        except (SQLiteIntegrityError, SQLAlchemyIntegrityError) as e:
+            # Vérifier si l'erreur est due à une contrainte d'unicité sur le nom de la guilde
+            error_message = str(e)
+            if "guild_name_key" in error_message or "UNIQUE constraint failed" in error_message:
                 raise ConflictError(f"Une guilde avec le nom '{newGuild.name}' existe déjà.")
             raise e
