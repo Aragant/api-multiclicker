@@ -3,8 +3,6 @@ import pytest
 import pytest_asyncio
 from infrastructure.database.base_repository import BaseRepository
 from fake_model import FakeModel
-
-
 @pytest_asyncio.fixture(scope="function")
 async def repo(transaction):
     return BaseRepository(FakeModel, lambda: transaction)
