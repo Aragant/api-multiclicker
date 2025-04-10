@@ -8,7 +8,7 @@ from domain.user.user_model import User
 from domain.user.user_repository import UserRepository
 
 @pytest.mark.asyncio
-async def test_update_my_guild_success(transaction):
+async def test_update_my_guild_success():
     # Arrange
     user_id = str(uuid.uuid4())
     username = "test-user"

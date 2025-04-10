@@ -5,7 +5,7 @@ from infrastructure.error.error import DuplicateEntryError
 from domain.user.user_repository import UserRepository
 
 @pytest.mark.asyncio
-async def test_signup_success(transaction):
+async def test_signup_success():
     # Arrange
     user_data = UserSignUp(
         username="testuser",
@@ -23,7 +23,7 @@ async def test_signup_success(transaction):
     assert result.disabled is False
 
 @pytest.mark.asyncio
-async def test_signup_duplicate_email(transaction):
+async def test_signup_duplicate_email():
     # Arrange
     user_data = UserSignUp(
         username="testuser1",
@@ -46,7 +46,7 @@ async def test_signup_duplicate_email(transaction):
         await signup(duplicate_user)
 
 @pytest.mark.asyncio
-async def test_signup_sso_constraints(transaction):
+async def test_signup_sso_constraints():
     # Arrange
     user_data = UserSignUp(
         username="testuser",

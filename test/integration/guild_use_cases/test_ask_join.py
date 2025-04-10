@@ -8,7 +8,7 @@ from domain.member.member_repository import MemberRepository
 from domain.guild.guild_repository import GuildRepository
 
 @pytest.mark.asyncio
-async def test_ask_join_success(transaction):
+async def test_ask_join_success():
     # Arrange
     master_user_id = "master-user-id"
     applicant_user_id = "applicant-user-id"
@@ -53,7 +53,7 @@ async def test_ask_join_success(transaction):
     assert applicant_found, "L'applicant n'a pas été trouvé dans les membres de la guilde"
 
 @pytest.mark.asyncio
-async def test_ask_join_already_in_guild(transaction):
+async def test_ask_join_already_in_guild():
     # Arrange
     master_user_id = "master-user-id"
     applicant_user_id = "applicant-user-id"

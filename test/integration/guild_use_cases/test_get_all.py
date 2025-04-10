@@ -5,7 +5,7 @@ from domain.guild.guild_schema import GuildCreateRequestBody
 from domain.member.member_repository import MemberRepository
 
 @pytest.mark.asyncio
-async def test_get_all_success(transaction):
+async def test_get_all_success():
     # Arrange
     user_id1 = "test-user-id-1"
     user_id2 = "test-user-id-2"

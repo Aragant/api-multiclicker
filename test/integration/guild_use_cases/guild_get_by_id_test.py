@@ -9,7 +9,7 @@ from domain.user.user_model import User
 import uuid
 
 @pytest.mark.asyncio
-async def test_get_by_id_success(transaction):
+async def test_get_by_id_success():
     # Arrange
     user_id = str(uuid.uuid4())
     username = "test-user"
@@ -49,7 +49,7 @@ async def test_get_by_id_success(transaction):
     assert member["guild_id"] == created_guild.id, "Member should be associated with the correct guild"
 
 @pytest.mark.asyncio
-async def test_get_by_id_not_found(transaction):
+async def test_get_by_id_not_found():
     # Act & Assert
     with pytest.raises(NotFoundError) as exc_info:
         await get_by_id("non-existent-id")

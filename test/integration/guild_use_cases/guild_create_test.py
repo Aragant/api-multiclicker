@@ -7,7 +7,7 @@ from domain.member.member_repository import MemberRepository
 from domain.guild.guild_repository import GuildRepository
 
 @pytest.mark.asyncio
-async def test_create_success(transaction):
+async def test_create_success():
     # Arrange
     user_id = "test-user-id"
     guild_data = GuildCreateRequestBody(
@@ -38,7 +38,7 @@ async def test_create_success(transaction):
     assert member_db["role"] == MemberRole.MASTER.value
 
 @pytest.mark.asyncio
-async def test_create_duplicate_name(transaction):
+async def test_create_duplicate_name():
     # Arrange
     user_id = "test-user-id"
     guild_name = "Test Guild"
