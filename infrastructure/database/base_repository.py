@@ -1,9 +1,10 @@
-from typing import Type
+from typing import Optional, Type
 from unittest.mock import Base
 
 from infrastructure.database.transaction import transaction
 from sqlalchemy import delete, select, and_
 from sqlalchemy.engine import Result
+from sqlalchemy.orm import selectinload, Load
 
 
 class BaseRepository:
@@ -35,17 +36,20 @@ class BaseRepository:
 
             return _result.__dict__
 
-    async def _get_all(self, options: list = None) -> Base:
-        """Return all results with optional relation loading"""
+    async def _get_all_with_option(self, options: Optional[list] = None) -> list[dict]:
+        """Return all results with optional relation loading based on relationship chain"""
         query = select(self.schema_class)
 
         if options:
-            query = query.options(*options)
+            # On construit dynamiquement les selectinload imbriqués
+            loader = selectinload(options[0])
+            for relation in options[1:]:
+                loader = loader.selectinload(relation)
+            query = query.options(loader)
 
         async with self.transaction() as session:
             result: Result = await session.execute(query)
             instances = result.scalars().all()
-
             return [instance.__dict__ for instance in instances]
 
     async def _save(self, instance: Base) -> Base:

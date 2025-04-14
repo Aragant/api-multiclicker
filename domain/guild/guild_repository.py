@@ -19,8 +19,8 @@ class GuildRepository:
         return guild
 
     async def get_all(self):
-        return await self.repo._get_all(
-            options=[selectinload(Guild.members).selectinload(Member.user)]
+        return await self.repo._get_all_with_option(
+            options=[Guild.members, Member.user]
         )
 
     async def get_by_master_user_id(self, user_id: str):
@@ -45,7 +45,7 @@ class GuildRepository:
 
     async def save(self, guild: Guild):
         return await self.repo._save(guild)
-    
+
     async def get_by_name(self, name: str):
         return await self.repo._get(name=name)
 
