@@ -27,7 +27,6 @@ async def create_guild_route(
 @router.get("", response_model=list[GuildWithSumMembers])
 async def get_all_guilds():
     return await get_all()
-d
 
 @router.post("/join/{guild_id}")
 async def join_guild(
