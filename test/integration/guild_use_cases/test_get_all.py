@@ -1,6 +1,6 @@
 import pytest
 from domain.guild.use_cases.get_all import get_all
-from domain.guild.use_cases.create import create
+from domain.guild.use_cases.create_guild import create_guild
 from domain.guild.guild_schema import GuildCreateRequestBody
 from domain.member.member_repository import MemberRepository
 
@@ -21,8 +21,8 @@ async def test_get_all_success():
     )
     
     # Create two guilds
-    guild1 = await create(guild_data1, user_id1)
-    guild2 = await create(guild_data2, user_id2)
+    guild1 = await create_guild(guild_data1, user_id1)
+    guild2 = await create_guild(guild_data2, user_id2)
     
     # Act
     guilds_map = await get_all()

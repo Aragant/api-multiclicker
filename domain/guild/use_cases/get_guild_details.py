@@ -2,7 +2,7 @@ from domain.guild.guild_repository import GuildRepository
 from domain.guild.guild_schema import GuildWithMembers
 
 
-async def get_by_id( guild_id: str) -> GuildWithMembers:
+async def get_guild_details( guild_id: str) -> GuildWithMembers:
         guild = await GuildRepository().get_by_id(guild_id)
         if not guild:
             return None

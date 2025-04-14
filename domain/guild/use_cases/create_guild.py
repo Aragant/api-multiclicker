@@ -7,7 +7,7 @@ from domain.member.member_model import Member, MemberRole
 from infrastructure.error.error import ConflictError
 
 
-async def create(newGuild: GuildCreateRequestBody, user_id: str) -> GuildFlat:
+async def create_guild(newGuild: GuildCreateRequestBody, user_id: str) -> GuildFlat:
         try:
             guild = Guild(
                 name=newGuild.name,

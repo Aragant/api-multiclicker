@@ -6,7 +6,7 @@ from domain.member.member_repository import MemberRepository
 from infrastructure.error.error import ForbiddenError
 
 
-async def ask_join(user_id: str, guild_id: str):
+async def apply_guild(user_id: str, guild_id: str):
     repo = GuildRepository()
 
     # check user already in a guild

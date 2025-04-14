@@ -1,7 +1,7 @@
 import pytest
 import uuid
 from domain.guild.use_cases.update_my_guild import update_my_guild
-from domain.guild.use_cases.create import create
+from domain.guild.use_cases.create_guild import create_guild
 from domain.guild.guild_schema import GuildCreateRequestBody, GuildUpdateRequestBody
 from domain.guild.guild_repository import GuildRepository
 from domain.user.user_model import User
@@ -25,7 +25,7 @@ async def test_update_my_guild_success():
         name="Original Guild",
         description="Initial description"
     )
-    created_guild = await create(guild_data, user_id)
+    created_guild = await create_guild(guild_data, user_id)
 
     update_data = GuildUpdateRequestBody(
         name="Updated Guild Name",
