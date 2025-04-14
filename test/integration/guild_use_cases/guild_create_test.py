@@ -1,7 +1,7 @@
 import pytest
 from domain.guild.use_cases.create_guild import create_guild
 from domain.guild.guild_schema import GuildCreateRequestBody
-from infrastructure.error.error import ConflictError
+from infrastructure.error.error import ConflictError, DuplicateEntryError
 from domain.member.member_model import MemberRole
 from domain.member.member_repository import MemberRepository
 from domain.guild.guild_repository import GuildRepository
@@ -51,7 +51,7 @@ async def test_create_duplicate_name():
     await create_guild(guild_data, user_id)
     
     # Act & Assert
-    with pytest.raises(ConflictError) as exc_info:
+    with pytest.raises(DuplicateEntryError) as exc_info:
         await create_guild(guild_data, user_id)
     
-    assert str(exc_info.value) == f"Une guilde avec le nom '{guild_name}' existe déjà."
+    assert str(exc_info.value) == f"Guild with name {guild_data.name} already exists"

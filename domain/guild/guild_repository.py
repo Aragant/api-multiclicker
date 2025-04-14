@@ -45,6 +45,9 @@ class GuildRepository:
 
     async def save(self, guild: Guild):
         return await self.repo._save(guild)
+    
+    async def get_by_name(self, name: str):
+        return await self.repo._get(name=name)
 
     async def update(self, guild_data: dict):
         guild_instance = self.repo.schema_class(**guild_data)

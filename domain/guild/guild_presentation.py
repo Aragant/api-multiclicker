@@ -21,14 +21,13 @@ async def create_guild_route(
     current_user: Annotated[UserPrivate, Depends(get_current_active_user)],
     guild: GuildCreateRequestBody,
 ):
-    guild = await create_guild(guild, current_user.id)
-    return guild
+    return await create_guild(guild, current_user.id)
 
 
 @router.get("", response_model=list[GuildWithSumMembers])
 async def get_all_guilds():
     return await get_all()
-
+d
 
 @router.post("/join/{guild_id}")
 async def join_guild(
