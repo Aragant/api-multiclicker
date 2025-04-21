@@ -3,6 +3,7 @@ from infrastructure.database.base_repository import BaseRepository
 from domain.guild.guild_model import Guild
 from domain.member.member_model import Member, MemberRole
 from sqlalchemy.orm import selectinload
+from infrastructure.database.query_builder import QueryBuilder
 from infrastructure.error.error import ForbiddenError, NotFoundError
 
 
@@ -19,29 +20,21 @@ class GuildRepository:
         return guild
 
     async def get_all(self):
-        return await self.repo._get_all_with_option(
-            options=[Guild.members, Member.user]
+        query = (
+            QueryBuilder(Guild)
+            .join_relation(Guild.members, Member.user)
+            .build()
         )
+        return await self.repo._execute_query(query)
 
     async def get_by_master_user_id(self, user_id: str):
-        options = [selectinload(Guild.members).selectinload(Member.user)]
-
-        # self.repo._get est inutilisable ici ou je ne sait pas exactement comment
         query = (
-            select(Guild)
-            .join(Member, Member.guild_id == Guild.id)
-            .where(Member.user_id == user_id)
-            .options(*options)
+            QueryBuilder(Guild)
+            .join_relation(Guild.members, Member.user)
+            .filter(Member.user_id == user_id)
+            .build()
         )
-
-        async with self.repo.transaction() as session:
-            result = await session.execute(query)
-            guild = result.scalars().first()
-
-        if not guild:
-            raise NotFoundError("Guilde non trouvée pour l'utilisateur spécifié.")
-
-        return guild
+        return await self.repo._execute_query(query)
 
     async def save(self, guild: Guild):
         return await self.repo._save(guild)

@@ -36,21 +36,21 @@ class BaseRepository:
 
             return _result.__dict__
 
-    async def _get_all_with_option(self, options: Optional[list] = None) -> list[dict]:
-        """Return all results with optional relation loading based on relationship chain"""
-        query = select(self.schema_class)
+    # async def _get_all_with_option(self, options: Optional[list] = None) -> list[dict]:
+    #     """Return all results with optional relation loading based on relationship chain"""
+    #     query = select(self.schema_class)
 
-        if options:
-            # On construit dynamiquement les selectinload imbriqués
-            loader = selectinload(options[0])
-            for relation in options[1:]:
-                loader = loader.selectinload(relation)
-            query = query.options(loader)
+    #     if options:
+    #         # On construit dynamiquement les selectinload imbriqués
+    #         loader = selectinload(options[0])
+    #         for relation in options[1:]:
+    #             loader = loader.selectinload(relation)
+    #         query = query.options(loader)
 
-        async with self.transaction() as session:
-            result: Result = await session.execute(query)
-            instances = result.scalars().all()
-            return [instance.__dict__ for instance in instances]
+    #     async with self.transaction() as session:
+    #         result: Result = await session.execute(query)
+    #         instances = result.scalars().all()
+    #         return [instance.__dict__ for instance in instances]
 
     async def _save(self, instance: Base) -> Base:
         """Save or update an instance"""
@@ -76,3 +76,14 @@ class BaseRepository:
             await session.flush()
             await session.refresh(merged_instance)
             return merged_instance.__dict__
+
+
+    async def _execute_query(self, query) -> Base:
+        async with self.transaction() as session:
+            result = await session.execute(query)
+            instances = result.scalars().all()
+            
+            if len(instances) == 1:
+                return instances[0].__dict__  # Un seul résultat
+            else:
+                return [instance.__dict__ for instance in instances]
