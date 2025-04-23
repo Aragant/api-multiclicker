@@ -4,20 +4,28 @@ from domain.guild.guild_model import Guild
 from domain.member.member_model import Member, MemberRole
 from sqlalchemy.orm import selectinload
 from infrastructure.database.query_builder import QueryBuilder
-from infrastructure.error.error import ForbiddenError, NotFoundError
-
 
 class GuildRepository:
     def __init__(self):
         self.repo = BaseRepository(Guild)
 
     async def get_by_id(self, guild_id: str):
-        guild = await self.repo._get(
-            id=guild_id, options=[selectinload(Guild.members).selectinload(Member.user)]
+        query = (
+            QueryBuilder(Guild)
+            .join_relation(
+                Guild.members,
+                Member,
+                filter_condition=QueryBuilder.or_(
+                    Member.role == MemberRole.MASTER.value,
+                    Member.role == MemberRole.MEMBER.value
+                ),
+                load_relation=True  # Assure-toi que les membres sont préchargés
+            )
+            .filter(Guild.id == guild_id)
+            .build()
         )
-        if not guild:
-            raise NotFoundError("Guilde")
-        return guild
+        guild = await self.repo._execute_query(query)
+        return guild[0] if guild else None
 
     async def get_all(self):
         query = (
@@ -30,8 +38,9 @@ class GuildRepository:
     async def get_by_master_user_id(self, user_id: str):
         query = (
             QueryBuilder(Guild)
-            .join_relation(Guild.members, Member.user)
+            .join_relation(Guild.members, Member)
             .filter(Member.user_id == user_id)
+            .filter(Member.role == MemberRole.MASTER.value)
             .build()
         )
         return await self.repo._execute_query(query)
@@ -42,11 +51,9 @@ class GuildRepository:
     async def get_by_name(self, name: str):
         return await self.repo._get(name=name)
 
-    async def update(self, guild_data: dict):
-        guild_instance = self.repo.schema_class(**guild_data)
-        return await self.repo._update(guild_instance)
+    async def update(self, guild: Guild):
+        return await self.repo._update(guild)
 
     async def add_member(self, new_member: Member) -> dict:
-        """Ajoute un membre à une guilde."""
-        saved_member = await self.repo._save(new_member)
-        return saved_member
+        return await self.repo._save(new_member)
+        

@@ -3,11 +3,14 @@
 from domain.guild.guild_repository import GuildRepository
 from domain.member.member_model import Member, MemberRole
 from domain.member.member_repository import MemberRepository
-from infrastructure.error.error import ForbiddenError
+from infrastructure.error.error import ForbiddenError, NotFoundError
 
 
 async def apply_guild(user_id: str, guild_id: str):
-    repo = GuildRepository()
+    
+    guild = await GuildRepository().get_by_id(guild_id)
+    if not guild:
+        raise NotFoundError("Guilde not found")
 
     # check user already in a guild
     existing_member = await MemberRepository().get_active_member_by_user_id(user_id)
@@ -18,7 +21,7 @@ async def apply_guild(user_id: str, guild_id: str):
     member = Member(user_id=user_id, guild_id=guild_id, role=MemberRole.APPLICANT.value)
 
     # asking to join
-    new_member = await repo.add_member(member)
+    new_member = await GuildRepository().add_member(member)
     if not new_member:
         raise ForbiddenError("Impossible de rejoindre la guilde.")
 

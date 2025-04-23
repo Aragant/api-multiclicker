@@ -12,7 +12,6 @@ async def init_database():
     guild = await create_guild(
         GuildCreateRequestBody(name="guild1", description="admin"), admin.id
     )
-    print(f"guild id is {guild.id}")
 
 
 async def create_main_user() -> UserPrivate:

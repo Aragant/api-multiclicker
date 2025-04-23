@@ -1,31 +1,22 @@
+from domain.guild.guild_model import Guild
 from domain.guild.guild_repository import GuildRepository
 from domain.guild.guild_schema import GuildUpdateRequestBody, GuildFlat
+from domain.guild.guild_services import GuildServices
 from infrastructure.error.error import ForbiddenError
-
-
-# to avoid try update _sa_instance_state who isn t a real attribute of the model
-def filter_sqlalchemy_internal_attributes(data: dict) -> dict:
-    """Filtre les attributs internes de SQLAlchemy (comme _sa_instance_state)."""
-    return {key: value for key, value in data.items() if not key.startswith("_sa_")}
 
 
 async def update_my_guild(
     current_user_id: str, updates: GuildUpdateRequestBody
 ) -> GuildFlat:
-    repo = GuildRepository()
 
-    guild = await repo.get_by_master_user_id(current_user_id)
-    guild = GuildFlat.model_validate(guild)
+    guild = await GuildServices().get_by_master_user_id(current_user_id)
 
     if not guild:
-        raise ForbiddenError("Vous n'êtes maître d'aucune guilde.")
+        raise ForbiddenError("You must be a guild master to update your guild.")
 
-    if updates.name is not None:
-        guild.name = updates.name
-    if updates.description is not None:
-        guild.description = updates.description
+    guild = Guild(id=guild.id, **updates.model_dump(exclude_unset=True))
 
-    guild_data = filter_sqlalchemy_internal_attributes(guild.__dict__)
-
-    updated_guild = await repo.update(guild_data)
+    updated_guild = await GuildRepository().update(guild)
     return GuildFlat.model_validate(updated_guild)
+
+

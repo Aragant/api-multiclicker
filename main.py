@@ -2,7 +2,6 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 import uvicorn
 
-
 from infrastructure.error.exeption_handler import setup_exepction_handlers
 from infrastructure.fastapi.set_middleware import set_middleware
 from infrastructure.fastapi.lifespan import lifespan

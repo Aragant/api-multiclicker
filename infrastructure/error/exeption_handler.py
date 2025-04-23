@@ -6,7 +6,7 @@ def setup_exepction_handlers(app):
     @app.exception_handler(NotFoundError)
     async def not_found_handler(request: Request, exc: NotFoundError):
         return JSONResponse(
-            content={"NotFoundError: ": f"{exc.ressource} not found"}, status_code=404
+            content={"NotFoundError": f"{exc.message}"}, status_code=404
         )
 
     @app.exception_handler(DatabaseError)

@@ -1,6 +1,6 @@
 class NotFoundError(Exception):
     def __init__(self, message: str):
-        super().__init__(message)
+        self.message = message
 
 class DatabaseError(Exception):
     def __init__(self):
@@ -8,12 +8,12 @@ class DatabaseError(Exception):
       
 class ConflictError(Exception):
     def __init__(self, message: str):
-        super().__init__(message)
+        self.message = message
         
 class DuplicateEntryError(Exception):
     def __init__(self, message: str):
-        super().__init__(message)
+        self.message = message
 
 class ForbiddenError(Exception):
     def __init__(self, message: str):
-        super().__init__(message)
+        self.message = message

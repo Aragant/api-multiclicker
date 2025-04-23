@@ -41,13 +41,10 @@ async def join_guild(
 
 @router.get("/{guild_id}", response_model=GuildWithMembers)
 async def get_guild_by_id(guild_id: str):
-    guild = await get_guild_details(guild_id)
-    if not guild:
-        raise HTTPException(status_code=404, detail="Guilde non trouvée")
-    return guild
+    return await get_guild_details(guild_id)
 
 
-@router.patch("/me", response_model=GuildFlat)
+@router.patch("/update_guild", response_model=GuildFlat)
 async def patch_my_guild(
     current_user: Annotated[UserPrivate, Depends(get_current_active_user)],
     updates: GuildUpdateRequestBody,

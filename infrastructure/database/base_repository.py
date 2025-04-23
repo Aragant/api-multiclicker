@@ -78,12 +78,4 @@ class BaseRepository:
             return merged_instance.__dict__
 
 
-    async def _execute_query(self, query) -> Base:
-        async with self.transaction() as session:
-            result = await session.execute(query)
-            instances = result.scalars().all()
-            
-            if len(instances) == 1:
-                return instances[0].__dict__  # Un seul résultat
-            else:
-                return [instance.__dict__ for instance in instances]
+ 

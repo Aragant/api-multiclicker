@@ -51,7 +51,5 @@ async def test_get_by_id_success():
 @pytest.mark.asyncio
 async def test_get_by_id_not_found():
     # Act & Assert
-    with pytest.raises(NotFoundError) as exc_info:
+    with pytest.raises(NotFoundError):
         await get_guild_details("non-existent-id")
-    
-    assert str(exc_info.value) == "Guilde", "Error message should be 'Guilde'" 

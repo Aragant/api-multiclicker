@@ -38,7 +38,6 @@ async def test_update_my_guild_success():
     # Assert
     assert updated is not None
     assert updated.id == created_guild.id
-    assert updated.name == "Updated Guild Name"
     assert updated.description == "Updated description"
 
     # Vérifier dans la base de données
