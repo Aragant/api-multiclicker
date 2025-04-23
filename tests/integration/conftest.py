@@ -5,6 +5,7 @@ from domain.user.user_model import User  # <- modèle User
 from domain.guild.guild_model import Guild
 from domain.member.member_model import Member
 
+
 @pytest.fixture(scope="function", autouse=True)
 async def create_test_db():
     async with engine.begin() as conn:

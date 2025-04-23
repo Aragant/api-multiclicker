@@ -49,7 +49,7 @@ async def google_callback(request: Request):
             user_to_add = User(
                 email=user.email,
             )
-            user_stored = await UserServices().create(user_to_add, provider=user.provider)
+            user_stored = await UserServices().create_with_provider(user_to_add, provider=user.provider)
 
         access_token = create_access_token(
             data={"sub": user_stored.id},

@@ -1,6 +1,8 @@
 from fastapi import Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from infrastructure.error.error import DatabaseError, DuplicateEntryError, NotFoundError, ForbiddenError
+from pydantic_core import ValidationError
+from infrastructure.error.error import DatabaseError, DuplicateEntryError, NotFoundError, ForbiddenError, UnprocessableEntityError
 
 def setup_exepction_handlers(app):
     @app.exception_handler(NotFoundError)
@@ -31,6 +33,16 @@ def setup_exepction_handlers(app):
             status_code=403,
             content={
                 "error": "Forbidden",
+                "message": str(exc) 
+            }
+        )
+    
+    @app.exception_handler(UnprocessableEntityError)
+    async def unprocessable_entity_handler(request: Request, exc: UnprocessableEntityError):
+        return JSONResponse(
+            status_code=422,
+            content={
+                "error": "Unprocessable Entity",
                 "message": str(exc) 
             }
         )
