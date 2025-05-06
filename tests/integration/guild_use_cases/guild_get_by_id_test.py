@@ -1,6 +1,6 @@
 import pytest
-from domain.guild.use_cases.get_by_id import get_by_id
-from domain.guild.use_cases.create import create
+from domain.guild.use_cases.get_guild_details import get_guild_details
+from domain.guild.use_cases.create_guild import create_guild
 from domain.guild.guild_schema import GuildCreateRequestBody
 from domain.member.member_repository import MemberRepository
 from infrastructure.error.error import NotFoundError
@@ -9,7 +9,7 @@ from domain.user.user_model import User
 import uuid
 
 @pytest.mark.asyncio
-async def test_get_by_id_success(transaction):
+async def test_get_by_id_success():
     # Arrange
     user_id = str(uuid.uuid4())
     username = "test-user"
@@ -29,10 +29,10 @@ async def test_get_by_id_success(transaction):
     )
     
     # Create a guild
-    created_guild = await create(guild_data, user_id)
+    created_guild = await create_guild(guild_data, user_id)
     
     # Act
-    guild = await get_by_id(created_guild.id)
+    guild = await get_guild_details(created_guild.id)
     
     # Assert
     assert guild is not None, "Guild should not be None"
@@ -49,9 +49,9 @@ async def test_get_by_id_success(transaction):
     assert member["guild_id"] == created_guild.id, "Member should be associated with the correct guild"
 
 @pytest.mark.asyncio
-async def test_get_by_id_not_found(transaction):
+async def test_get_by_id_not_found():
     # Act & Assert
     with pytest.raises(NotFoundError) as exc_info:
-        await get_by_id("non-existent-id")
+        await get_guild_details("non-existent-id")
     
     assert str(exc_info.value) == "Guilde", "Error message should be 'Guilde'" 

@@ -9,6 +9,11 @@ class NewGuild(BaseModel):
 class GuildCreateRequestBody(BaseModel):
     name: str
     description: str
+    
+class GuildPublic(BaseModel):
+    id: str
+    name: str
+    description: str
 
 class GuildUpdateRequestBody (BaseModel):
     name: Optional[str] = None

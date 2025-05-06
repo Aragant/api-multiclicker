@@ -1,5 +1,7 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, field_validator
+
+from infrastructure.error.error import ForbiddenError
 
 
 class UserFlat(BaseModel):
@@ -30,9 +32,17 @@ class UserForLogin(BaseModel):
 
 
 class UserSignUp(BaseModel):
-    username: Optional[str] = None
-    password: Optional[str] = None
+    username: str
+    password: str
     email: str
+    
+    @field_validator("email", mode="before")
+    def validate_email(cls, v):
+        try:
+            EmailStr._validate(v)
+        except ValueError:
+            raise ForbiddenError("L'adresse email que vous avez fournie est invalide.")
+        return v
 
 
 class UserUpdate(BaseModel):

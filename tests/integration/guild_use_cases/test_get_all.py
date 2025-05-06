@@ -1,11 +1,11 @@
 import pytest
 from domain.guild.use_cases.get_all import get_all
-from domain.guild.use_cases.create import create
+from domain.guild.use_cases.create_guild import create_guild
 from domain.guild.guild_schema import GuildCreateRequestBody
 from domain.member.member_repository import MemberRepository
 
 @pytest.mark.asyncio
-async def test_get_all_success(transaction):
+async def test_get_all_success():
     # Arrange
     user_id1 = "test-user-id-1"
     user_id2 = "test-user-id-2"
@@ -21,8 +21,8 @@ async def test_get_all_success(transaction):
     )
     
     # Create two guilds
-    guild1 = await create(guild_data1, user_id1)
-    guild2 = await create(guild_data2, user_id2)
+    guild1 = await create_guild(guild_data1, user_id1)
+    guild2 = await create_guild(guild_data2, user_id2)
     
     # Act
     guilds_map = await get_all()

@@ -1,6 +1,6 @@
 import pytest
-from domain.guild.use_cases.ask_join import ask_join
-from domain.guild.use_cases.create import create
+from domain.guild.use_cases.apply_guild import apply_guild
+from domain.guild.use_cases.create_guild import create_guild
 from domain.guild.guild_schema import GuildCreateRequestBody
 from infrastructure.error.error import ForbiddenError
 from domain.member.member_model import MemberRole
@@ -8,7 +8,7 @@ from domain.member.member_repository import MemberRepository
 from domain.guild.guild_repository import GuildRepository
 
 @pytest.mark.asyncio
-async def test_ask_join_success(transaction):
+async def test_ask_join_success():
     # Arrange
     master_user_id = "master-user-id"
     applicant_user_id = "applicant-user-id"
@@ -18,7 +18,7 @@ async def test_ask_join_success(transaction):
         name="Test Guild",
         description="A test guild for testing"
     )
-    created_guild = await create(guild_data, master_user_id)
+    created_guild = await create_guild(guild_data, master_user_id)
     
     # Vérifier que le maître est bien membre de la guilde
     master_member = await MemberRepository().get_active_member_by_user_id(master_user_id)
@@ -31,7 +31,7 @@ async def test_ask_join_success(transaction):
     assert applicant_member is None
     
     # Act
-    result = await ask_join(applicant_user_id, created_guild.id)
+    result = await apply_guild(applicant_user_id, created_guild.id)
     
     # Assert
     assert result is not None
@@ -53,7 +53,7 @@ async def test_ask_join_success(transaction):
     assert applicant_found, "L'applicant n'a pas été trouvé dans les membres de la guilde"
 
 @pytest.mark.asyncio
-async def test_ask_join_already_in_guild(transaction):
+async def test_ask_join_already_in_guild():
     # Arrange
     master_user_id = "master-user-id"
     applicant_user_id = "applicant-user-id"
@@ -68,8 +68,8 @@ async def test_ask_join_already_in_guild(transaction):
         description="Another test guild for testing"
     )
     
-    guild1 = await create(guild_data1, master_user_id)
-    guild2 = await create(guild_data2, applicant_user_id)
+    guild1 = await create_guild(guild_data1, master_user_id)
+    guild2 = await create_guild(guild_data2, applicant_user_id)
     
     # Vérifier que l'applicant est déjà membre d'une guilde
     applicant_member = await MemberRepository().get_active_member_by_user_id(applicant_user_id)
@@ -79,4 +79,4 @@ async def test_ask_join_already_in_guild(transaction):
     
     # Act & Assert
     with pytest.raises(ForbiddenError, match="Vous ne pouvez pas rejoindre cette guilde."):
-        await ask_join(applicant_user_id, guild1.id) 
+        await apply_guild(applicant_user_id, guild1.id) 

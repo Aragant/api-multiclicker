@@ -15,6 +15,7 @@ async def update_my_guild(
     repo = GuildRepository()
 
     guild = await repo.get_by_master_user_id(current_user_id)
+    guild = GuildFlat.model_validate(guild)
 
     if not guild:
         raise ForbiddenError("Vous n'êtes maître d'aucune guilde.")
