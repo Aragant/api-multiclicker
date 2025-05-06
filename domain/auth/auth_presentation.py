@@ -12,13 +12,13 @@ from domain.auth.authentication_service import (
 from domain.auth.refresh_token.refresh_token_model import RefreshToken
 from domain.auth.refresh_token.refresh_token_repository import RefreshTokenRepository
 
-from domain.auth.token_schema import Token
-
+from domain.auth.token_schema import Token, TokenWithUser
+from domain.user.user_service import UserService
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/login")
+@router.post("/login", response_model=TokenWithUser)
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()], request: Request
 ) -> Token:
@@ -53,9 +53,11 @@ async def login_for_access_token(
             user_agent=request_user_agent,
         )
     )
+    user_private = await UserService().get_by_id(user.id)
 
-    return Token(
-        access_token=access_token, refresh_token=refresh_token, token_type="bearer"
+
+    return TokenWithUser(
+        access_token=access_token, refresh_token=refresh_token, token_type="bearer", user=user_private
     )
 
 

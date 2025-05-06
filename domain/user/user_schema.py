@@ -16,6 +16,7 @@ class UserPrivate(BaseModel):
     username: Optional[str]
     disabled: bool
     description: Optional[str]
+    guild_id: Optional[str] = None
     
     
 class UserPublic(BaseModel):
