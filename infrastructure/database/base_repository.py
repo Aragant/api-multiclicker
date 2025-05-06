@@ -52,6 +52,27 @@ class BaseRepository:
     #         instances = result.scalars().all()
     #         return [instance.__dict__ for instance in instances]
 
+    async def _get_multiple(self, options: list = None, **kwargs) -> list[dict]:
+        """Return multiple results by filters"""
+        conditions = []
+        for key, value in kwargs.items():
+            column = getattr(self.schema_class, key)
+            if isinstance(value, list):
+                conditions.append(column.in_(value))
+            else:
+                conditions.append(column == value)
+
+        query = select(self.schema_class).where(and_(*conditions))
+
+        if options:
+            query = query.options(*options)
+
+        async with self.transaction() as session:
+            result: Result = await session.execute(query)
+            instances = result.scalars().all()
+            return [instance.__dict__ for instance in instances]
+
+
     async def _save(self, instance: Base) -> Base:
         """Save or update an instance"""
         async with self.transaction() as session:
