@@ -7,12 +7,17 @@ from fastapi.security import OAuth2PasswordBearer
 from domain.user.user_services import UserServices
 from jwt.exceptions import InvalidTokenError
 import jwt
+from infrastructure.error.error import ForbiddenError
+from infrastructure.security.password_hash_service import get_password_hash
+from domain.user.user_repository import UserRepository
+from domain.user.user_model import User
+
 
 from domain.user.user_schema import UserForLogin, UserPrivate
 from infrastructure.security.password_hash_service import verify_password
 from infrastructure.security.token_data import TokenData
 from infrastructure.logging.logging_config import logger
-
+from domain.user.user_schema import UserSignUp
 
 ALGORITHM = "HS256"
 SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -32,6 +37,22 @@ async def authenticate_user(username: str, password: str):
     logger.info("Utilisateur connecté : %s", user.username)
     return user
 
+async def create_user(user_data: UserSignUp):
+    existing_user = await UserRepository().get_by_email(user_data.email)
+    if existing_user:
+        raise ForbiddenError("Un utilisateur avec cet email existe déjà.")
+
+    hashed_pwd = get_password_hash(user_data.password)
+
+    user: UserSignUp = User(
+        username=user_data.username,
+        email=user_data.email,
+        password=hashed_pwd,
+        disabled=False, 
+    )
+
+    new_user = await UserRepository().save(user)
+    return new_user
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()

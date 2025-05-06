@@ -4,7 +4,7 @@ from domain.user.user_services import UserServices
 from domain.user.user_schema import UserSignUp, UserPrivate
 from domain.guild.use_cases import create_guild
 from domain.guild.guild_schema import GuildCreateRequestBody
-
+from infrastructure.security.password_hash_service import get_password_hash
 
 async def init_database():
     admin = await create_main_user()
@@ -12,10 +12,9 @@ async def init_database():
     guild = await create_guild(
         GuildCreateRequestBody(name="guild1", description="admin"), admin.id
     )
-    print(f"guild id is {guild.id}")
 
 
 async def create_main_user() -> UserPrivate:
-    user: UserSignUp = User(username="admin", password="admin", email="admin")
+    user: UserSignUp = User(username="admin", password=get_password_hash("admin"), email="admin")
     user = await UserRepository().save(user)
     return UserPrivate.model_validate(user)

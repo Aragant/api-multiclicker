@@ -25,4 +25,6 @@ def get_password_hash(pwd: str) -> str:
 
 
 def verify_password(plain_pwd: str, hashed_pwd: str) -> bool:
+    if not hashed_pwd or not hashed_pwd.startswith("$2b$"):
+        raise ValueError(f"Invalid hash format: {hashed_pwd}")
     return bcrypt.checkpw(*to_bits(plain_pwd, hashed_pwd))
