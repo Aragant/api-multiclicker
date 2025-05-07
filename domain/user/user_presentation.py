@@ -1,18 +1,31 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 
 from domain.auth.authentication_service import get_current_active_user
-from domain.user.use_cases import get_own_profile, get_profile, signup, update_profile
+from domain.user.use_cases import (
+    get_own_profile,
+    get_profile,
+    signup,
+    update_profile,
+    get_profiles_by_usernames,
+)
 from domain.user.user_schema import UserPrivate, UserPublic, UserSignUp, UserUpdate
 
+from typing import List
 
 router = APIRouter(prefix="/user", tags=["user"])
 
+def parse_usernames(usernames: str = Query(...)) -> List[str]:
+    return [u.strip() for u in usernames.split(",") if u.strip()]
 
 @router.get("", response_model=UserPublic)
 async def get_profile_route(id: str):
     return await get_profile(id)
-    
+
+
+@router.get("/users", response_model=List[UserPublic])
+async def get_profiles_route(usernames: List[str] = Depends(parse_usernames)):
+    return await get_profiles_by_usernames(usernames)
 
 
 @router.post("")
