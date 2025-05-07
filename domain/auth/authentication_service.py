@@ -28,7 +28,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
 async def authenticate_user(username: str, password: str):
-    user: UserForLogin = await UserServices().get_by_username(username)
+    user: UserForLogin = await UserServices().get_by_username_for_login(username)
     if not user:
         return False
     if not verify_password(password, user.password):

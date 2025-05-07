@@ -8,12 +8,16 @@ from sqlalchemy.orm import selectinload, with_loader_criteria
 from domain.member.member_model import Member
 from typing import List
 
+
 class UserRepository:
     def __init__(self):
         self.repo = BaseRepository(User)
         self.transaction = transaction
 
     async def get_by_username(self, username: str):
+        return await self.repo._get(username=username, disabled=False)
+
+    async def get_by_username_for_login(self, username: str):
         return await self.repo._get(username=username, disabled=False)
 
     async def get_multiple_by_username(self, usernames: List[str]):
