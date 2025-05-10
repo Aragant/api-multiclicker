@@ -7,22 +7,41 @@ from domain.guild.guild_schema import GuildCreateRequestBody
 from infrastructure.security.password_hash_service import get_password_hash
 from domain.guild.use_cases import apply_guild
 
+
 async def init_database():
     admin = await create_main_user()
-    guild = await create_guild(
+    guild1 = await create_guild(
         GuildCreateRequestBody(name="guild1", description="admin"), admin.id
     )
-    user = await create_seconde_user()
-    await apply_guild(user.id, guild.id)
 
+    user1 = await create_user("asd")
+    guild2 = await create_guild(
+        GuildCreateRequestBody(name="guild2", description="guild 2"), user1.id
+    )
+
+    user2 = await create_user("te2")
+    user3 = await create_user("te")
+
+    await apply_guild(user3.id, guild1.id)
+    await apply_guild(user2.id, guild1.id)
+
+    await apply_guild(user3.id, guild2.id)
 
 
 async def create_main_user() -> UserPrivate:
-    user: UserSignUp = User(username="admin", password=get_password_hash("admin"), email="admin")
+    user: UserSignUp = User(
+        username="admin", password=get_password_hash("admin"), email="admin"
+    )
     user = await UserRepository().save(user)
     return UserPrivate.model_validate(user)
 
-async def create_seconde_user() -> UserPrivate:
-    user: UserSignUp = User(username="te", password=get_password_hash("te"), email="te", description="le meilleur joueur de tous les temps")  
+
+async def create_user(all) -> UserPrivate:
+    user: UserSignUp = User(
+        username=all,
+        password=get_password_hash(all),
+        email=all,
+        description="le meilleur joueur de tous les temps",
+    )
     user = await UserRepository().save(user)
     return UserPrivate.model_validate(user)

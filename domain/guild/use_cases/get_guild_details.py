@@ -8,7 +8,6 @@ async def get_guild_details( guild_id: str) -> GuildWithMembers:
         if not guild:
             return None
         
-
         members = [member for member in guild['members'] if member.role != MemberRole.APPLICANT.value]
     
 

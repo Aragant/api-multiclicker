@@ -7,6 +7,7 @@ from infrastructure.database.query_builder import QueryBuilder
 from infrastructure.error.error import ForbiddenError, NotFoundError
 from domain.user.user_model import User
 
+
 class GuildRepository:
     def __init__(self):
         self.repo = BaseRepository(Guild)
@@ -31,8 +32,7 @@ class GuildRepository:
             .filter(Member.role == MemberRole.MASTER.value)
             .build()
         )
-        return await self.repo._execute_query(query)
-
+        return await self.repo._execute_one_or_none(query)
 
     async def get_applicants_by_guild_id(self, guild_id: str) -> list[Member]:
         query = (

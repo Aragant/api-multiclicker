@@ -11,7 +11,7 @@ async def get_applicants_if_master(user_id: str) -> list[MemberApplicant]:
     if not guild:
         raise ForbiddenError("Vous n'êtes pas le maître de cette guilde")
 
-    members = await repo.get_applicants_by_guild_id(guild[0].id)
+    members = await repo.get_applicants_by_guild_id(guild.id)
 
     return [
         MemberApplicant(

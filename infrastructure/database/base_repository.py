@@ -12,7 +12,7 @@ class BaseRepository:
         self.schema_class = schema
         self.transaction = transaction
 
-    async def _get(self, options: list = None, **kwargs) -> Base:
+    async def _real_get(self, options: list = None, **kwargs) -> Base:
         """Return only one result by filters"""
         conditions = []
         for key, value in kwargs.items():
@@ -34,7 +34,15 @@ class BaseRepository:
             if _result is None:
                 return None
 
-            return _result.__dict__
+            return _result
+
+    async def _get(self, options: list = None, **kwargs) -> Base:
+        result = await self._real_get(options, **kwargs)
+
+        if result is None:
+            return None
+
+        return result.__dict__
 
     # async def _get_all_with_option(self, options: Optional[list] = None) -> list[dict]:
     #     """Return all results with optional relation loading based on relationship chain"""
@@ -72,7 +80,6 @@ class BaseRepository:
             instances = result.scalars().all()
             return [instance.__dict__ for instance in instances]
 
-
     async def _save(self, instance: Base) -> Base:
         """Save or update an instance"""
         async with self.transaction() as session:
@@ -91,6 +98,28 @@ class BaseRepository:
             await session.execute(query)
             await session.flush()
 
+    async def _delete_where(self, **kwargs) -> None:
+        """
+        Supprime les entrées qui correspondent aux filtres passés en kwargs.
+        Pour des filtres "différent de", utiliser la syntaxe `not__<fieldname>=value`.
+        Exemple : not__guild_id='some_id'
+        """
+        conditions = []
+        for key, value in kwargs.items():
+            if key.startswith("not__"):
+                column_name = key[5:]
+                column = getattr(self.schema_class, column_name)
+                conditions.append(column != value)
+            else:
+                column = getattr(self.schema_class, key)
+                conditions.append(column == value)
+
+        query = delete(self.schema_class).where(and_(*conditions))
+
+        async with self.transaction() as session:
+            await session.execute(query)
+            await session.flush()
+
     async def _update(self, instance: Base) -> Base:
         async with self.transaction() as session:
             merged_instance = await session.merge(instance)
@@ -98,10 +127,15 @@ class BaseRepository:
             await session.refresh(merged_instance)
             return merged_instance.__dict__
 
-
     async def _execute_query(self, query) -> Base:
         async with self.transaction() as session:
             result = await session.execute(query)
             instances = result.scalars().all()
-            
+
             return instances
+
+    async def _execute_one_or_none(self, query) -> Optional[Base]:
+        async with self.transaction() as session:
+            result = await session.execute(query)
+            instance = result.scalars().first()
+            return instance

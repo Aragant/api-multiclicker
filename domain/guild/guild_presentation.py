@@ -1,4 +1,11 @@
-from domain.guild.use_cases import apply_guild, create_guild, get_all, get_guild_details, get_applicants_if_master
+from domain.guild.use_cases import (
+    apply_guild,
+    create_guild,
+    get_all,
+    get_guild_details,
+    get_applicants_if_master,
+    accept_applicant,
+)
 from domain.member.member_schema import MemberApplicant
 from fastapi import APIRouter, Depends
 from typing import Annotated
@@ -29,6 +36,7 @@ async def create_guild_route(
 async def get_all_guilds():
     return await get_all()
 
+
 @router.post("/join/{guild_id}")
 async def join_guild(
     current_user: Annotated[UserPrivate, Depends(get_current_active_user)],
@@ -39,11 +47,20 @@ async def join_guild(
         raise HTTPException(status_code=404, detail="Guilde non trouvée")
     return await apply_guild(current_user.id, guild_id)
 
-@router.get("/applicants", response_model=list[MemberApplicant])  
+
+@router.get("/applicants", response_model=list[MemberApplicant])
 async def get_applicants(
-    current_user: Annotated[UserPrivate, Depends(get_current_active_user)]
+    current_user: Annotated[UserPrivate, Depends(get_current_active_user)],
 ):
     return await get_applicants_if_master(current_user.id)
+
+
+@router.patch("/accept/{applicant_id}")
+async def patch_applicant(
+    current_user: Annotated[UserPrivate, Depends(get_current_active_user)],
+    applicant_id: str,
+):
+    return await accept_applicant(current_user.id, applicant_id)
 
 
 @router.get("/{guild_id}", response_model=GuildWithMembers)
