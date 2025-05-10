@@ -28,6 +28,7 @@ class GuildRepository:
             QueryBuilder(Guild)
             .join_relation(Guild.members, Member.user)
             .filter(Member.user_id == user_id)
+            .filter(Member.role == MemberRole.MASTER.value)
             .build()
         )
         return await self.repo._execute_query(query)

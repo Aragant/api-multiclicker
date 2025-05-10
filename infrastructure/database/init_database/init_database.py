@@ -23,6 +23,6 @@ async def create_main_user() -> UserPrivate:
     return UserPrivate.model_validate(user)
 
 async def create_seconde_user() -> UserPrivate:
-    user: UserSignUp = User(username="te", password=get_password_hash("te"), email="te")
+    user: UserSignUp = User(username="te", password=get_password_hash("te"), email="te", description="le meilleur joueur de tous les temps")  
     user = await UserRepository().save(user)
     return UserPrivate.model_validate(user)
