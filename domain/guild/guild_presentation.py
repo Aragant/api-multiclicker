@@ -5,6 +5,7 @@ from domain.guild.use_cases import (
     get_guild_details,
     get_applicants_if_master,
     accept_applicant,
+    reject_applicant,
 )
 from domain.member.member_schema import MemberApplicant
 from fastapi import APIRouter, Depends
@@ -56,11 +57,19 @@ async def get_applicants(
 
 
 @router.patch("/accept/{applicant_id}")
-async def patch_applicant(
+async def accept_applicant_in_guild(
     current_user: Annotated[UserPrivate, Depends(get_current_active_user)],
     applicant_id: str,
 ):
     return await accept_applicant(current_user.id, applicant_id)
+
+
+@router.patch("/reject/{applicant_id}")
+async def reject_applicant_in_guild(
+    current_user: Annotated[UserPrivate, Depends(get_current_active_user)],
+    applicant_id: str,
+):
+    return await reject_applicant(current_user.id, applicant_id)
 
 
 @router.get("/{guild_id}", response_model=GuildWithMembers)
