@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from fastapi import FastAPI
 import uvicorn
-
+import asyncio
 
 from infrastructure.error.exeption_handler import setup_exepction_handlers
 from infrastructure.fastapi.set_middleware import set_middleware
@@ -12,8 +12,9 @@ from domain.auth.auth_presentation import router as auth_router
 from domain.user.user_presentation import router as user_router
 from domain.guild.guild_presentation import router as guild_router
 from domain.auth.google_sso import router as google_router
+from domain.websocket.ws_presentation import router as websocket_router
 
-rest_router = [auth_router, google_router, user_router, guild_router]
+rest_router = [auth_router, google_router, user_router, guild_router, websocket_router]
 
 load_dotenv()
 
