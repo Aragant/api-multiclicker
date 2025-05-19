@@ -44,7 +44,7 @@ async def login_for_access_token(
 
     refresh_token = create_refresh_token(
         data={"sub": user.id},
-        expires_delta=timedelta(days=int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS"))),
+        expires_delta=timedelta(days=int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", 7))),
     )
 
     await RefreshTokenRepository().save(
@@ -57,10 +57,13 @@ async def login_for_access_token(
     )
     user_private = await UserServices().get_by_id(user.id)
 
-
     return TokenWithUser(
-        access_token=access_token, refresh_token=refresh_token, token_type="bearer", user=user_private
+        access_token=access_token,
+        refresh_token=refresh_token,
+        token_type="bearer",
+        user=user_private,
     )
+
 
 @router.post("/signUp", status_code=200)
 async def sign_up(user_data: UserSignUp, request: Request):

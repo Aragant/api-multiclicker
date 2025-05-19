@@ -1,3 +1,3 @@
 class EventValue:
     OK = "OK"
-    USERNAME = "username"
+    PLAYER_ID = "playerId"
