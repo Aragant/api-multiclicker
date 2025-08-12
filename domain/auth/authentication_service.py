@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 import os
 from typing import Annotated
-from fastapi import Depends, HTTPException, status
+from fastapi import Cookie, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
 from domain.user.user_services import UserServices
@@ -55,21 +55,48 @@ def create_refresh_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+# async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+#     credentials_exception = HTTPException(
+#         status_code=status.HTTP_401_UNAUTHORIZED,
+#         detail="Could not validate credentials",
+#         headers={"WWW-Authenticate": "Bearer"},
+#     )
+#     try:
+#         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+#         id: str = payload.get("sub")
+#         if id is None:
+#             raise credentials_exception
+#         token_data = TokenData(id=id)
+#     except InvalidTokenError:
+#         raise credentials_exception
+#     user = await UserServices().get_by_id(id=token_data.id)
+#     if user is None:
+#         raise credentials_exception
+#     return user
+
+async def get_current_user(
+    access_token: Annotated[str | None, Cookie()] = None
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+    print(access_token)
+    
+    if access_token is None:
+        raise credentials_exception
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
         id: str = payload.get("sub")
+        print(id)
         if id is None:
             raise credentials_exception
-        token_data = TokenData(id=id)
     except InvalidTokenError:
         raise credentials_exception
-    user = await UserServices().get_by_id(id=token_data.id)
+
+    user = await UserServices().get_by_id(id=id)
+    print(user)
     if user is None:
         raise credentials_exception
     return user

@@ -14,7 +14,7 @@ async def signup(user: UserSignUp) -> UserPrivate:
     await check_unique_username(user.username)
     
     if not is_valid_password(user.password):
-        raise UnprocessableEntityError("Password must have at least 8 characters and contain at least one uppercase letter, one lowercase letter and one digit.")
+        raise UnprocessableEntityError("password", "Password must have at least 8 characters and contain at least one uppercase letter, one lowercase letter and one digit.")
 
     password = get_password_hash(user.password)
 
@@ -32,13 +32,13 @@ async def signup(user: UserSignUp) -> UserPrivate:
 async def check_unique_email(email: str):
     user = await UserRepository().get_by_email(email)
     if user:
-        raise DuplicateEntryError(f"User with email {email} already exists")
+        raise DuplicateEntryError("email_exists", f"User with email {email} already exists")
     
 
 async def check_unique_username(username: str):
     user = await UserRepository().get_by_username(username)
     if user:
-        raise DuplicateEntryError(f"User with username {username} already exists")
+        raise DuplicateEntryError("username_exists", f"User with username {username} already exists")
     
 def is_valid_password(password: str) -> bool:
     if len(password) <= 8:
