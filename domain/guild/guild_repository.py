@@ -5,6 +5,7 @@ from domain.member.member_model import Member, MemberRole
 from sqlalchemy.orm import selectinload
 from infrastructure.database.query_builder import QueryBuilder
 from infrastructure.error.error import ForbiddenError, NotFoundError
+from domain.user.user_model import User
 
 
 class GuildRepository:
@@ -20,11 +21,7 @@ class GuildRepository:
         return guild
 
     async def get_all(self):
-        query = (
-            QueryBuilder(Guild)
-            .join_relation(Guild.members, Member.user)
-            .build()
-        )
+        query = QueryBuilder(Guild).join_relation(Guild.members, Member.user).build()
         return await self.repo._execute_query(query)
 
     async def get_by_master_user_id(self, user_id: str):
@@ -32,6 +29,17 @@ class GuildRepository:
             QueryBuilder(Guild)
             .join_relation(Guild.members, Member.user)
             .filter(Member.user_id == user_id)
+            .filter(Member.role == MemberRole.MASTER.value)
+            .build()
+        )
+        return await self.repo._execute_one_or_none(query)
+
+    async def get_applicants_by_guild_id(self, guild_id: str) -> list[Member]:
+        query = (
+            QueryBuilder(Member)
+            .filter(Member.guild_id == guild_id)
+            .filter(Member.role == MemberRole.APPLICANT.value)
+            .join_relation(Member.user, User)
             .build()
         )
         return await self.repo._execute_query(query)

@@ -47,8 +47,12 @@ async def google_callback(request: Request):
 
         user_stored = await UserServices().get_by_email(user.email)
         if not user_stored:
-            user_to_add = User(email=user.email)
-            user_stored = await UserServices().create_with_provider(user_to_add, provider=user.provider)
+            user_to_add = User(
+                email=user.email,
+            )
+            user_stored = await UserServices().create_with_provider(
+                user_to_add, provider=user.provider
+            )
 
         access_token = create_access_token(
             data={"sub": user_stored.id},
@@ -62,7 +66,9 @@ async def google_callback(request: Request):
 
         refresh_token = create_refresh_token(
             data={"sub": user_stored.id},
-            expires_delta=timedelta(days=int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS"))),
+            expires_delta=timedelta(
+                days=int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", 7))
+            ),
         )
 
         await RefreshTokenRepository().save(

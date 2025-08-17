@@ -9,6 +9,10 @@ class UserFlat(BaseModel):
     username: str
     disabled: bool
 
+class UserSignUp(BaseModel):
+    username: str
+    password: str
+    email: EmailStr
 
 class UserPrivate(BaseModel):
     id: str
@@ -16,7 +20,7 @@ class UserPrivate(BaseModel):
     username: Optional[str]
     disabled: bool
     description: Optional[str]
-    
+    guild_id: Optional[str] = None
     
 class UserPublic(BaseModel):
     id: str
@@ -28,7 +32,6 @@ class UserForLogin(BaseModel):
     id: str
     username: str
     password: str
-
 
 class UserSignUp(BaseModel):
     username: str

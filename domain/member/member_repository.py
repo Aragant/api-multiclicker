@@ -18,3 +18,19 @@ class MemberRepository:
             return member
         else:
             return None
+
+    async def update_user_role_on_guild(
+        self, user_id: str, guild_id: str, role: MemberRole
+    ):
+        member = await self.repo._real_get(user_id=user_id, guild_id=guild_id)
+        if not member:
+            return None
+
+        member.role = role.value
+        return await self.repo._update(member)
+
+    async def delete_applicant_from_guild(self, user_id: str, guild_id: str):
+        await self.repo._delete_where(user_id=user_id, guild_id=guild_id)
+
+    async def delete_applications_except_guild(self, user_id: str, guild_id: str):
+        await self.repo._delete_where(user_id=user_id, not__guild_id=guild_id)
